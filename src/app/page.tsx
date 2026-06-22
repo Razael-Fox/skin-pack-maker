@@ -787,6 +787,12 @@ interface SkinPreviewCanvasProps {
   skin: SkinItem
 }
 
+interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
+  mozImageSmoothingEnabled?: boolean
+  webkitImageSmoothingEnabled?: boolean
+  msImageSmoothingEnabled?: boolean
+}
+
 function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
