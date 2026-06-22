@@ -11,6 +11,8 @@ import {
   User,
   Settings,
   HelpCircle,
+  FileJson,
+  Puzzle,
 } from "lucide-react"
 
 // Generate version 4 UUID
@@ -82,20 +84,68 @@ export default function SkinPackMaker() {
     }
   }
 
-  const addNewSkin = () => {
+  const addNewSkin = (file?: File) => {
     const id = Math.random().toString(36).slice(2, 11)
     const count = skins.length + 1
-    const newSkin: SkinItem = {
-      id,
-      name: `Skin ${count}`,
-      geometry: "geometry.humanoid.custom",
-      type: "free",
-      textureName: `skin_${id}.png`,
-      textureFile: null,
-      textureUrl: "",
+
+    if (file) {
+      if (!file.type.includes("image/png")) {
+        alert("Please upload a PNG image file!")
+        return
+      }
+      const url = URL.createObjectURL(file)
+      const img = new Image()
+      img.src = url
+      img.onload = () => {
+        let detectedGeometry: GeometryType = "geometry.humanoid.custom"
+        try {
+          const tempCanvas = document.createElement("canvas")
+          tempCanvas.width = img.naturalWidth
+          tempCanvas.height = img.naturalHeight
+          const tempCtx = tempCanvas.getContext("2d")
+          if (tempCtx) {
+            tempCtx.drawImage(img, 0, 0)
+            const imgData = tempCtx.getImageData(47, 20, 1, 12)
+            let hasSolidPixel = false
+            for (let i = 3; i < imgData.data.length; i += 4) {
+              if (imgData.data[i] > 0) {
+                hasSolidPixel = true
+                break
+              }
+            }
+            if (!hasSolidPixel && img.naturalHeight === 64) {
+              detectedGeometry = "geometry.humanoid.customSlim"
+            }
+          }
+        } catch (e) {
+          console.warn("Could not auto-detect geometry:", e)
+        }
+
+        const newSkin: SkinItem = {
+          id,
+          name: file.name.replace(/\.[^/.]+$/, "") || `Skin ${count}`,
+          geometry: detectedGeometry,
+          type: "free",
+          textureName: `skin_${id}.png`,
+          textureFile: file,
+          textureUrl: url,
+        }
+        setSkins((prev) => [...prev, newSkin])
+        setSelectedSkinId(id)
+      }
+    } else {
+      const newSkin: SkinItem = {
+        id,
+        name: `Skin ${count}`,
+        geometry: "geometry.humanoid.custom",
+        type: "free",
+        textureName: `skin_${id}.png`,
+        textureFile: null,
+        textureUrl: "",
+      }
+      setSkins([...skins, newSkin])
+      setSelectedSkinId(id)
     }
-    setSkins([...skins, newSkin])
-    setSelectedSkinId(id)
   }
 
   const removeSkin = (id: string, e: React.MouseEvent) => {
@@ -127,11 +177,51 @@ export default function SkinPackMaker() {
     }
 
     const url = URL.createObjectURL(file)
-    updateSkin(id, {
-      textureFile: file,
-      textureUrl: url,
-      textureName: `skin_${id}.png`,
-    })
+
+    // Auto-detect standard (Steve) vs. slim (Alex) model
+    const img = new Image()
+    img.src = url
+    img.onload = () => {
+      // Check arm pixels transparency:
+      // Alex (slim, 3px arms) uses 3 columns. If it's a 64x64 skin:
+      // The right arm occupies X: 40-47, Y: 20-32 (standard) vs X: 40-46, Y: 20-32 (slim).
+      // A common way to check for Alex is to verify if column 47 is transparent in the arm area, or checking translucent zones.
+      // Even simpler: Minecraft skin formats have the Right Arm layout:
+      // In 64x64/64x32 layout: Right arm starts at pixel (44, 20) with width 4 (Steve) or 3 (Alex).
+      // So column X=47 (0-indexed) inside Y=20-32 is checked. If they are completely transparent (alpha = 0), it's slim.
+      let detectedGeometry: GeometryType = "geometry.humanoid.custom"
+      try {
+        const tempCanvas = document.createElement("canvas")
+        tempCanvas.width = img.naturalWidth
+        tempCanvas.height = img.naturalHeight
+        const tempCtx = tempCanvas.getContext("2d")
+        if (tempCtx) {
+          tempCtx.drawImage(img, 0, 0)
+          // Look at Right Arm column X = 47. (In standard skin layout, column 47 has pixels for Right Arm).
+          // If we read column X=47 from Y=20 to Y=31, let's see if it's empty (fully transparent).
+          const imgData = tempCtx.getImageData(47, 20, 1, 12)
+          let hasSolidPixel = false
+          for (let i = 3; i < imgData.data.length; i += 4) {
+            if (imgData.data[i] > 0) {
+              hasSolidPixel = true
+              break
+            }
+          }
+          if (!hasSolidPixel && img.naturalHeight === 64) {
+            detectedGeometry = "geometry.humanoid.customSlim"
+          }
+        }
+      } catch (e) {
+        console.warn("Could not auto-detect geometry model:", e)
+      }
+
+      updateSkin(id, {
+        textureFile: file,
+        textureUrl: url,
+        textureName: `skin_${id}.png`,
+        geometry: detectedGeometry,
+      })
+    }
   }
 
   const handleExport = async () => {
@@ -217,11 +307,19 @@ export default function SkinPackMaker() {
     }
   }
 
+  const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      Array.from(e.target.files).forEach((file) => addNewSkin(file))
+    }
+  }
+
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0a0a0a] pb-12 font-sans text-zinc-100 antialiased selection:bg-[#00e676] selection:text-black">
       <div className="pointer-events-none absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-[#00e676]/5 blur-[160px]" />
-      <header className="sticky top-0 z-50 w-full border-b border-[#00e676]/20 bg-[#121212]/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
+
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        {/* Banner Title */}
+        <div className="mb-8 flex flex-col justify-between gap-4 border-b border-[#00e676]/20 pb-6 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="rounded-[4px] border border-[#00e676]/30 bg-[#1a1a1a] p-2 text-[#00e676] shadow-[0_0_12px_rgba(0,230,118,0.15)]">
               <Sparkles className="h-5 w-5" />
@@ -236,8 +334,7 @@ export default function SkinPackMaker() {
             </div>
           </div>
         </div>
-      </header>
-      <main className="mx-auto max-w-7xl px-6 py-8">
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <section className="space-y-6 lg:col-span-4">
             <div className="relative overflow-hidden rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
@@ -274,18 +371,31 @@ export default function SkinPackMaker() {
               </div>
             </div>
             <div className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
-              <div className="mb-5 flex items-center justify-between">
+              <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
                   <User className="h-4 w-4 text-zinc-500" />
                   <span>Skins ({skins.length})</span>
                 </h2>
-                <button
-                  onClick={addNewSkin}
-                  className="flex items-center gap-1 rounded-[4px] bg-[#00e676] px-3 py-1.5 text-[10px] font-bold text-black transition-all hover:bg-[#00c853]"
-                >
-                  <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
-                  <span>ADD SKIN</span>
-                </button>
+                <div className="flex gap-2">
+                  <label className="flex cursor-pointer items-center justify-center gap-1 rounded-[4px] bg-[#00e676] px-3 py-1.5 text-[10px] font-bold text-black transition-all hover:bg-[#00c853]">
+                    <Upload className="h-3.5 w-3.5 stroke-[2.5]" />
+                    <span>ADD PNG SKIN</span>
+                    <input
+                      type="file"
+                      accept="image/png"
+                      multiple
+                      className="hidden"
+                      onChange={handleAddFileInput}
+                    />
+                  </label>
+                  <button
+                    onClick={() => addNewSkin()}
+                    className="flex items-center justify-center rounded-[4px] border border-zinc-800 bg-[#121212] px-2.5 py-1.5 text-[10px] font-bold text-zinc-400 hover:border-zinc-700 hover:text-white"
+                    title="Add empty slot"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </div>
               <div className="custom-scrollbar max-h-[350px] space-y-2 overflow-y-auto pr-1">
                 {skins.map((skin) => (
@@ -303,7 +413,7 @@ export default function SkinPackMaker() {
                     </span>
                     <button
                       onClick={(e) => removeSkin(skin.id, e)}
-                      className="text-red-400"
+                      className="text-red-400 hover:text-red-300"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -507,8 +617,9 @@ export default function SkinPackMaker() {
               </h3>
               <div className="grid grid-cols-1 gap-4 font-sans text-xs text-zinc-400 md:grid-cols-2">
                 <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
-                  <p className="text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
-                    📁 File Manifest Structure
+                  <p className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
+                    <FileJson className="h-3.5 w-3.5 text-zinc-500" />
+                    <span>File Manifest Structure</span>
                   </p>
                   <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
                     <li>
@@ -525,8 +636,9 @@ export default function SkinPackMaker() {
                   </ul>
                 </div>
                 <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
-                  <p className="text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
-                    🧩 Geometric Parameters
+                  <p className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
+                    <Puzzle className="h-3.5 w-3.5 text-zinc-500" />
+                    <span>Geometric Parameters</span>
                   </p>
                   <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
                     <li>
