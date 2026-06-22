@@ -224,28 +224,23 @@ export default function SkinPackMaker() {
   }
 
   return (
-    <div
-      className="relative min-h-screen pb-12 text-zinc-100 selection:bg-[#3c8527] selection:text-white"
-      style={{
-        backgroundColor: "#1c1c1c",
-        backgroundImage:
-          "linear-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px)",
-        backgroundSize: "8px 8px",
-      }}
-    >
-      {/* Header (OreUI styling with flat gray panel and black borders) */}
-      <header className="relative z-40 border-b-4 border-black bg-[#313233] shadow-[inset_0_-2px_0px_#18191a,inset_0_2px_0px_#5e5f60]">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-4 md:flex-row">
+    <div className="relative min-h-screen bg-[#0a0a0a] pb-12 font-sans text-zinc-100 antialiased selection:bg-[#00e676] selection:text-black">
+      {/* Subtle modern accent glow */}
+      <div className="pointer-events-none absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-[#00e676]/5 blur-[160px]" />
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-[#00e676]/20 bg-[#121212]/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-4 sm:flex-row">
           <div className="flex items-center gap-3">
-            <div className="border-2 border-black bg-[#4c4c4c] p-2 text-[#fbc02d] shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#8b8b8b]">
+            <div className="rounded-[4px] border border-[#00e676]/30 bg-[#1a1a1a] p-2 text-[#00e676] shadow-[0_0_12px_rgba(0,230,118,0.15)]">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="font-pixel text-sm tracking-wider text-[#fbc02d] [text-shadow:2px_2px_0px_#1f1f1f] md:text-base">
-                MC BEDROCK SKIN PACK MAKER
+              <h1 className="font-sans text-sm font-semibold tracking-[0.1em] text-white uppercase">
+                MC Bedrock Skin Pack Maker
               </h1>
-              <p className="mt-0.5 font-mono text-[10px] text-zinc-400">
-                OreUI System Edition v1.0.0
+              <p className="font-mono text-[10px] tracking-wider text-zinc-500">
+                OREUI EDITION v1.21+
               </p>
             </div>
           </div>
@@ -254,30 +249,31 @@ export default function SkinPackMaker() {
               href="https://learn.microsoft.com/en-us/minecraft/creator/documents/packagingaskinpack?view=minecraft-bedrock-stable"
               target="_blank"
               rel="noreferrer"
-              className="font-pixel flex items-center gap-1.5 border-2 border-black bg-[#4c4c4c] px-3 py-2 text-[9px] text-white shadow-[inset_-2px_-2px_0px_#1e1e1e,inset_2px_2px_0px_#8b8b8b] hover:border-amber-300 active:bg-[#383838]"
+              className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] px-3.5 py-1.5 text-xs font-semibold tracking-[0.05em] text-zinc-300 uppercase transition-all hover:border-[#00e676]/50 hover:bg-[#222222] hover:shadow-[0_0_8px_rgba(0,230,118,0.1)]"
             >
-              <Info className="h-3 w-3 text-[#fbc02d]" />
-              <span>CREATOR DOCS</span>
+              <Info className="mr-1.5 inline h-3.5 w-3.5 text-[#00e676]" />
+              <span>Creator Docs</span>
             </a>
           </div>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="mx-auto max-w-7xl px-4 py-6">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* LEFT PANEL: Pack settings (Columns: 4) */}
           <section className="space-y-6 lg:col-span-4">
-            {/* Metadata Card (Minecraft panel styling) */}
-            <div className="border-2 border-black bg-[#313233] p-5 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c]">
-              <h2 className="font-pixel mb-4 flex items-center gap-2 text-[10px] text-[#fbc02d] [text-shadow:1.5px_1.5px_0px_#1f1f1f]">
-                <Settings className="h-4 w-4 text-zinc-400" />
-                <span>PACK SETTINGS</span>
+            {/* Metadata Card */}
+            <div className="relative overflow-hidden rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
+              <div className="absolute top-0 left-0 h-[2px] w-full bg-[#00e676]" />
+              <h2 className="mb-5 flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
+                <Settings className="h-4 w-4 text-zinc-500" />
+                <span>Pack Settings</span>
               </h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="font-pixel mb-1.5 block text-[10px] text-zinc-400">
+                  <label className="mb-1.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                     Pack Display Name
                   </label>
                   <input
@@ -285,13 +281,13 @@ export default function SkinPackMaker() {
                     value={packName}
                     onChange={(e) => setPackName(e.target.value)}
                     placeholder="E.g. My Skin Pack"
-                    className="w-full rounded-none border-2 border-black bg-[#151617] px-3 py-2 font-mono text-xs text-white shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)] outline-none focus:border-amber-300"
+                    className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="font-pixel mb-1.5 block text-[10px] text-zinc-400">
+                    <label className="mb-1.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                       Pack Version
                     </label>
                     <input
@@ -299,38 +295,40 @@ export default function SkinPackMaker() {
                       value={packVersion}
                       onChange={(e) => setPackVersion(e.target.value)}
                       placeholder="1.0.0"
-                      className="w-full rounded-none border-2 border-black bg-[#151617] px-3 py-2 font-mono text-xs text-white shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)] outline-none focus:border-amber-300"
+                      className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
                     />
                   </div>
                   <div>
-                    <label className="font-pixel mb-1.5 block text-[10px] text-zinc-400">
+                    <label className="mb-1.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                       Format
                     </label>
-                    <div className="border-2 border-black bg-[#151617]/60 px-3 py-2 font-mono text-xs text-zinc-400 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
-                      Bedrock Pack
+                    <div className="rounded-[4px] border border-zinc-800/80 bg-white/[0.02] px-3 py-2 font-sans text-xs text-zinc-500">
+                      Bedrock Edition
                     </div>
                   </div>
                 </div>
 
                 {/* UUID Config */}
-                <div className="space-y-3 border-t border-zinc-700/60 pt-4">
+                <div className="space-y-3 border-t border-zinc-800/60 pt-4">
                   <div className="flex items-center justify-between">
-                    <span className="font-pixel flex items-center gap-1.5 text-[10px] text-zinc-400">
+                    <span className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                       <FileCode className="h-3.5 w-3.5 text-zinc-500" />
-                      <span>UUID SCHEMAS</span>
+                      <span>UUID Schemas</span>
                     </span>
                     <button
                       onClick={regenerateUUIDs}
-                      className="font-pixel flex items-center gap-1 border border-black bg-[#4c4c4c] px-2 py-1 text-[9px] text-zinc-300 shadow-[inset_-1px_-1px_0px_#1e1e1e,inset_1px_1px_0px_#8b8b8b] hover:border-amber-300 hover:text-amber-300 active:bg-[#383838]"
+                      className="flex items-center gap-1 rounded-[4px] border border-[#00e676]/20 bg-white/[0.03] px-2 py-1 text-[9px] font-semibold text-[#00e676] transition-all hover:border-[#00e676] hover:text-white"
                     >
                       <RefreshCw className="h-2.5 w-2.5" />
                       <span>REGEN</span>
                     </button>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between border-2 border-black bg-[#151617] p-2 font-mono text-[9px] text-zinc-400 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
-                      <span className="mr-2 text-zinc-500">HEADER:</span>
+                  <div className="space-y-1.5 font-mono text-[10px]">
+                    <div className="flex items-center justify-between rounded-[4px] border border-zinc-800/60 bg-[#121212] p-2 text-zinc-400">
+                      <span className="font-semibold tracking-wide text-zinc-600">
+                        HDR:
+                      </span>
                       <span
                         className="max-w-[200px] truncate"
                         title={uuidHeader}
@@ -338,8 +336,10 @@ export default function SkinPackMaker() {
                         {uuidHeader}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between border-2 border-black bg-[#151617] p-2 font-mono text-[9px] text-zinc-400 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
-                      <span className="mr-2 text-zinc-500">MODULE:</span>
+                    <div className="flex items-center justify-between rounded-[4px] border border-zinc-800/60 bg-[#121212] p-2 text-zinc-400">
+                      <span className="font-semibold tracking-wide text-zinc-600">
+                        MDL:
+                      </span>
                       <span
                         className="max-w-[200px] truncate"
                         title={uuidModule}
@@ -353,23 +353,23 @@ export default function SkinPackMaker() {
             </div>
 
             {/* Skin List Card */}
-            <div className="border-2 border-black bg-[#313233] p-5 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c]">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-pixel flex items-center gap-2 text-[10px] text-[#fbc02d] [text-shadow:1.5px_1.5px_0px_#1f1f1f]">
-                  <User className="h-4 w-4 text-zinc-400" />
-                  <span>SKINS ({skins.length})</span>
+            <div className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
+                  <User className="h-4 w-4 text-zinc-500" />
+                  <span>Skins ({skins.length})</span>
                 </h2>
                 <button
                   onClick={addNewSkin}
-                  className="font-pixel flex items-center gap-1 border-2 border-black border-t-[#5da83b] border-r-[#1a3d11] border-b-[#1a3d11] border-l-[#5da83b] bg-[#3c8527] px-2.5 py-1.5 text-[9px] text-white hover:border-amber-300 hover:bg-[#4ea333] active:bg-[#285b19]"
+                  className="flex items-center gap-1 rounded-[4px] bg-[#00e676] px-3 py-1.5 text-[10px] font-bold text-black transition-all hover:bg-[#00c853] hover:shadow-[0_0_12px_rgba(0,230,118,0.25)] active:scale-[0.98]"
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-3.5 w-3.5 stroke-[2.5]" />
                   <span>ADD SKIN</span>
                 </button>
               </div>
 
               {skins.length === 0 ? (
-                <div className="border-2 border-dashed border-zinc-700 bg-[#151617] py-8 text-center font-mono text-xs text-zinc-500">
+                <div className="rounded-[4px] border border-dashed border-zinc-800 bg-[#121212] py-8 text-center font-mono text-xs text-zinc-500">
                   No skins added yet. Click &quot;ADD SKIN&quot; above.
                 </div>
               ) : (
@@ -378,15 +378,15 @@ export default function SkinPackMaker() {
                     <div
                       key={skin.id}
                       onClick={() => setSelectedSkinId(skin.id)}
-                      className={`flex cursor-pointer items-center justify-between border-2 p-3 transition-all ${
+                      className={`flex cursor-pointer items-center justify-between rounded-[4px] border p-3 transition-all ${
                         selectedSkinId === skin.id
-                          ? "border-[#4ea333] bg-[#2c3d2e] shadow-[inset_-2px_-2px_0px_#182a1a,inset_2px_2px_0px_#6fbc54]"
-                          : "border-[#121212] bg-[#242526] shadow-[inset_-2px_-2px_0px_#161718,inset_2px_2px_0px_#444546] hover:border-zinc-500"
+                          ? "border-[#00e676] bg-white/[0.03] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
+                          : "border-zinc-800/80 bg-[#141414] hover:border-[#00e676]/30 hover:shadow-[0_0_8px_rgba(0,230,118,0.05)]"
                       }`}
                     >
                       <div className="flex min-w-0 items-center gap-3">
                         {/* Mini preview thumbnail */}
-                        <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden border-2 border-black bg-[#151617] shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
+                        <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-[2px] border border-zinc-800 bg-[#121212]">
                           {skin.textureUrl ? (
                             <img
                               src={skin.textureUrl}
@@ -399,28 +399,32 @@ export default function SkinPackMaker() {
                           )}
                         </div>
                         <div className="truncate">
-                          <p className="font-pixel truncate text-xs text-zinc-200">
+                          <p className="truncate text-xs font-semibold tracking-wide text-zinc-200">
                             {skin.name}
                           </p>
-                          <span className="font-pixel mt-1 inline-block rounded-none border border-black bg-[#151617] px-1.5 py-0.5 text-[8px] text-zinc-400 uppercase">
+                          <span className="mt-1 inline-block rounded-[2px] border border-zinc-800 bg-white/[0.04] px-1.5 py-0.5 text-[8px] font-semibold tracking-wider text-zinc-500 uppercase">
                             {skin.geometry === "geometry.humanoid.customSlim"
-                              ? "Alex (Slim)"
-                              : "Steve (Std)"}
+                              ? "Alex"
+                              : "Steve"}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <span
-                          className={`font-pixel border border-black px-1 py-0.5 text-[8px] capitalize ${skin.type === "free" ? "bg-[#3c8527]/30 text-emerald-400" : "bg-blue-500/30 text-blue-400"}`}
+                          className={`rounded-[2px] border px-1.5 py-0.5 text-[8px] font-bold uppercase ${
+                            skin.type === "free"
+                              ? "border-[#00e676]/20 bg-[#00e676]/10 text-[#00e676]"
+                              : "border-blue-500/20 bg-blue-500/10 text-blue-400"
+                          }`}
                         >
                           {skin.type}
                         </span>
                         <button
                           onClick={(e) => removeSkin(skin.id, e)}
-                          className="border border-black bg-[#b3312c] p-1.5 text-white shadow-[inset_-1px_-1px_0px_#5c1613,inset_1px_1px_0px_#d85e59] transition-all hover:bg-[#cf3e39]"
+                          className="rounded-[4px] border border-red-500/20 bg-red-500/10 p-1.5 text-red-400 transition-all hover:bg-red-500 hover:text-black active:scale-95"
                           title="Delete skin"
                         >
-                          <Trash2 className="h-3 w-3" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </div>
@@ -430,32 +434,32 @@ export default function SkinPackMaker() {
             </div>
 
             {/* Export Card */}
-            <div className="border-2 border-black bg-[#313233] p-5 text-center shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c]">
+            <div className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 text-center shadow-md">
               <button
                 onClick={handleExport}
                 disabled={exporting || skins.length === 0}
-                className="font-pixel flex w-full cursor-pointer items-center justify-center gap-2 border-2 border-black border-t-[#5da83b] border-r-[#1a3d11] border-b-[#1a3d11] border-l-[#5da83b] bg-[#3c8527] py-3 text-xs tracking-wider text-white shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all hover:border-amber-300 hover:bg-[#4ea333] disabled:border-zinc-800 disabled:bg-[#4c4c4c] disabled:text-zinc-500 disabled:shadow-none"
+                className="w-full cursor-pointer rounded-[4px] bg-[#00e676] py-3 text-xs font-bold tracking-[0.1em] text-black uppercase transition-all hover:bg-[#00c853] hover:shadow-[0_0_15px_rgba(0,230,118,0.3)] active:scale-[0.99] disabled:bg-zinc-800 disabled:text-zinc-600 disabled:shadow-none"
               >
-                <Download className="h-4 w-4" />
-                <span>{exporting ? "PACKING..." : "EXPORT .MCPACK"}</span>
+                <Download className="mr-1.5 inline h-4 w-4" />
+                <span>{exporting ? "Generating..." : "Export .mcpack"}</span>
               </button>
               {exportMessage && (
                 <div
-                  className={`mt-3 flex items-start gap-2 border-2 border-black p-3 text-left font-mono text-xs ${
+                  className={`mt-4 flex items-start gap-2 rounded-[4px] border p-3 text-left font-sans text-xs ${
                     exportMessage.startsWith("Success")
-                      ? "bg-[#2c3d2e] text-emerald-300"
-                      : "bg-[#4e2d2a] text-red-300"
+                      ? "border-[#00e676]/20 bg-[#00e676]/5 text-[#00e676]"
+                      : "border-red-500/20 bg-red-500/5 text-red-400"
                   }`}
                 >
                   {exportMessage.startsWith("Success") ? (
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#00e676]" />
                   ) : (
-                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
                   )}
                   <span>{exportMessage}</span>
                 </div>
               )}
-              <p className="mt-2.5 font-mono text-[10px] text-zinc-500">
+              <p className="mt-3 font-sans text-[10px] leading-relaxed text-zinc-600">
                 Double-clicking the downloaded <code>.mcpack</code> file imports
                 it directly into Minecraft Bedrock.
               </p>
@@ -465,33 +469,26 @@ export default function SkinPackMaker() {
           {/* RIGHT PANEL: Selected Skin Edit (Columns: 8) */}
           <section className="space-y-6 lg:col-span-8">
             {currentSkin ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
                 {/* 3D-Like Canvas Rendering Preview (Columns: 5) */}
-                <div className="flex flex-col items-center justify-between border-2 border-black bg-[#313233] p-5 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c] md:col-span-5">
-                  <div className="mb-4 flex w-full items-center justify-between border-b-2 border-[#121212] pb-2">
-                    <h3 className="font-pixel text-[9px] tracking-wider text-zinc-400">
-                      LIVE SKIN PREVIEW
+                <div className="flex flex-col items-center justify-between rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md md:col-span-5">
+                  <div className="mb-4 flex w-full items-center justify-between border-b border-zinc-800 pb-2.5">
+                    <h3 className="text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                      Skin Projection
                     </h3>
-                    <span className="font-pixel text-[9px] text-[#fbc02d]">
-                      {currentSkin.textureFile ? "ACTIVE" : "EMPTY"}
+                    <span className="text-[10px] font-semibold tracking-[0.05em] text-[#00e676] uppercase">
+                      {currentSkin.textureFile ? "ACTIVE" : "AWAITING"}
                     </span>
                   </div>
 
-                  {/* Character preview background frame representing cobblestone/wood block style */}
-                  <div
-                    className="mb-2 border-4 border-black bg-[#151617] p-4 shadow-[inset_-4px_-4px_0px_#090909,inset_4px_4px_0px_#3a3a3b]"
-                    style={{
-                      backgroundImage:
-                        "radial-gradient(#2c2c2c 25%, transparent 25%), radial-gradient(#2c2c2c 25%, transparent 25%)",
-                      backgroundPosition: "0 0, 4px 4px",
-                      backgroundSize: "8px 8px",
-                    }}
-                  >
+                  {/* Character preview background frame - modern dark grid layout */}
+                  <div className="group relative rounded-[4px] border border-zinc-800 bg-[#121212] p-4 shadow-inner transition-all duration-300 hover:border-[#00e676]/30">
+                    <div className="pointer-events-none absolute inset-0 rounded-[4px] bg-gradient-to-tr from-[#00e676]/2 to-transparent" />
                     <SkinPreviewCanvas skin={currentSkin} />
                   </div>
 
-                  <div className="mt-2 space-y-1 text-center">
-                    <p className="font-pixel text-xs text-[#fbc02d]">
+                  <div className="mt-4 space-y-1 text-center">
+                    <p className="text-xs font-semibold tracking-wide text-white">
                       {currentSkin.name}
                     </p>
                     <p className="max-w-[200px] text-[9px] leading-4 text-zinc-500">
@@ -502,10 +499,10 @@ export default function SkinPackMaker() {
                 </div>
 
                 {/* Edit Form (Columns: 7) */}
-                <div className="flex flex-col justify-between border-2 border-black bg-[#313233] p-5 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c] md:col-span-7">
+                <div className="flex flex-col justify-between rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md md:col-span-7">
                   <div className="space-y-5">
-                    <div className="border-b-2 border-[#121212] pb-3">
-                      <h3 className="font-pixel text-xs tracking-widest text-zinc-200 uppercase">
+                    <div className="border-b border-zinc-800 pb-3.5">
+                      <h3 className="text-xs font-semibold tracking-[0.1em] text-zinc-200 uppercase">
                         Edit Skin Metadata
                       </h3>
                       <p className="mt-1 text-[10px] text-zinc-500">
@@ -514,7 +511,7 @@ export default function SkinPackMaker() {
                     </div>
 
                     <div>
-                      <label className="font-pixel mb-2 block text-[10px] text-zinc-400">
+                      <label className="mb-2 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                         Skin Display Name
                       </label>
                       <input
@@ -523,12 +520,12 @@ export default function SkinPackMaker() {
                         onChange={(e) =>
                           updateSkin(currentSkin.id, { name: e.target.value })
                         }
-                        className="w-full rounded-none border-2 border-black bg-[#151617] px-3 py-2 font-mono text-xs text-white shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)] outline-none focus:border-amber-300"
+                        className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
                       />
                     </div>
 
                     <div>
-                      <label className="font-pixel mb-2.5 block text-[10px] text-zinc-400">
+                      <label className="mb-2.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                         Model Geometry (Arm Width)
                       </label>
                       <div className="grid grid-cols-2 gap-3">
@@ -539,16 +536,16 @@ export default function SkinPackMaker() {
                               geometry: "geometry.humanoid.custom",
                             })
                           }
-                          className={`cursor-pointer border-2 p-3 text-left transition-all ${
+                          className={`cursor-pointer rounded-[4px] border p-3 text-left transition-all ${
                             currentSkin.geometry === "geometry.humanoid.custom"
-                              ? "border-[#4ea333] bg-[#2c3d2e] shadow-[inset_-2px_-2px_0px_#182a1a,inset_2px_2px_0px_#6fbc54]"
-                              : "border-black bg-[#242526] shadow-[inset_-2px_-2px_0px_#161718,inset_2px_2px_0px_#444546] hover:border-zinc-500"
+                              ? "border-[#00e676] bg-white/[0.03] text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
+                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
                           }`}
                         >
-                          <p className="font-pixel text-[10px] text-zinc-200">
-                            Steve Model
+                          <p className="text-[10px] font-bold tracking-[0.05em] uppercase">
+                            Steve model
                           </p>
-                          <span className="mt-1 block font-mono text-[9px] text-zinc-500">
+                          <span className="mt-1 block font-sans text-[9px] text-zinc-500">
                             Standard size (4px arms)
                           </span>
                         </button>
@@ -559,17 +556,17 @@ export default function SkinPackMaker() {
                               geometry: "geometry.humanoid.customSlim",
                             })
                           }
-                          className={`cursor-pointer border-2 p-3 text-left transition-all ${
+                          className={`cursor-pointer rounded-[4px] border p-3 text-left transition-all ${
                             currentSkin.geometry ===
                             "geometry.humanoid.customSlim"
-                              ? "border-[#4ea333] bg-[#2c3d2e] shadow-[inset_-2px_-2px_0px_#182a1a,inset_2px_2px_0px_#6fbc54]"
-                              : "border-black bg-[#242526] shadow-[inset_-2px_-2px_0px_#161718,inset_2px_2px_0px_#444546] hover:border-zinc-500"
+                              ? "border-[#00e676] bg-white/[0.03] text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
+                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
                           }`}
                         >
-                          <p className="font-pixel text-[10px] text-zinc-200">
-                            Alex Model
+                          <p className="text-[10px] font-bold tracking-[0.05em] uppercase">
+                            Alex model
                           </p>
-                          <span className="mt-1 block font-mono text-[9px] text-zinc-500">
+                          <span className="mt-1 block font-sans text-[9px] text-zinc-500">
                             Slim size (3px arms)
                           </span>
                         </button>
@@ -577,7 +574,7 @@ export default function SkinPackMaker() {
                     </div>
 
                     <div>
-                      <label className="font-pixel mb-2.5 block text-[10px] text-zinc-400">
+                      <label className="mb-2.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                         Accessibility Tier
                       </label>
                       <div className="grid grid-cols-2 gap-3">
@@ -586,10 +583,10 @@ export default function SkinPackMaker() {
                           onClick={() =>
                             updateSkin(currentSkin.id, { type: "free" })
                           }
-                          className={`font-pixel cursor-pointer border-2 p-2.5 text-center text-[9px] transition-all ${
+                          className={`cursor-pointer rounded-[4px] border p-2.5 text-center text-[9px] font-semibold tracking-[0.05em] uppercase transition-all ${
                             currentSkin.type === "free"
-                              ? "border-[#4ea333] bg-[#3c8527]/30 text-emerald-400 shadow-[inset_-2px_-2px_0px_#182a1a,inset_2px_2px_0px_#6fbc54]"
-                              : "border-black bg-[#242526] text-zinc-400 shadow-[inset_-2px_-2px_0px_#161718,inset_2px_2px_0px_#444546] hover:border-zinc-500"
+                              ? "border-[#00e676] bg-[#00e676]/10 text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
+                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
                           }`}
                         >
                           FREE SKIN
@@ -599,10 +596,10 @@ export default function SkinPackMaker() {
                           onClick={() =>
                             updateSkin(currentSkin.id, { type: "paid" })
                           }
-                          className={`font-pixel cursor-pointer border-2 p-2.5 text-center text-[9px] transition-all ${
+                          className={`cursor-pointer rounded-[4px] border p-2.5 text-center text-[9px] font-semibold tracking-[0.05em] uppercase transition-all ${
                             currentSkin.type === "paid"
-                              ? "border-blue-500/40 bg-blue-500/20 text-blue-400 shadow-[inset_-2px_-2px_0px_#12223c,inset_2px_2px_0px_#5493bc]"
-                              : "border-black bg-[#242526] text-zinc-400 shadow-[inset_-2px_-2px_0px_#161718,inset_2px_2px_0px_#444546] hover:border-zinc-500"
+                              ? "border-blue-500/40 bg-blue-500/10 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
+                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-blue-500/35"
                           }`}
                         >
                           PAID SKIN
@@ -612,7 +609,7 @@ export default function SkinPackMaker() {
 
                     {/* Image Upload Area */}
                     <div>
-                      <label className="font-pixel mb-2 block text-[10px] text-zinc-400">
+                      <label className="mb-2 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                         Minecraft Skin Texture (PNG)
                       </label>
                       <TextureUploadBox
@@ -624,36 +621,38 @@ export default function SkinPackMaker() {
                     </div>
                   </div>
 
-                  <div className="mt-6 flex items-center gap-2 border-t-2 border-[#121212] pt-4 font-mono text-[10px] text-zinc-500">
-                    <Info className="h-4 w-4 shrink-0 text-zinc-600" />
-                    <span>Drop a 64x64 or 64x32 PNG file layout to apply.</span>
+                  <div className="mt-6 flex items-center gap-2 border-t border-zinc-800/80 pt-4 font-sans text-[10px] text-zinc-500">
+                    <Info className="h-4 w-4 shrink-0 text-[#00e676]" />
+                    <span>
+                      Upload a standard 64x64 or 64x32 PNG skin texture file.
+                    </span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-black bg-[#313233] p-12 text-center text-zinc-500 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c]">
+              <div className="rounded-[4px] border border-dashed border-zinc-800 bg-[#1a1a1a] p-12 text-center text-zinc-500 shadow-md">
                 <HelpCircle className="mx-auto mb-3 h-12 w-12 text-zinc-600" />
-                <p className="font-pixel text-sm text-zinc-400">
+                <p className="text-xs font-semibold tracking-[0.1em] text-zinc-400 uppercase">
                   NO SKIN SELECTED
                 </p>
-                <p className="mt-1 font-mono text-xs text-zinc-500">
+                <p className="mt-1 font-sans text-[10px] text-zinc-500">
                   Select a skin from the panel lists or click ADD SKIN.
                 </p>
               </div>
             )}
 
             {/* Reference info guidelines Accordion/Card */}
-            <div className="space-y-4 border-2 border-black bg-[#313233] p-5 shadow-[inset_-2px_-2px_0px_#1c1c1c,inset_2px_2px_0px_#5c5c5c]">
-              <h3 className="font-pixel flex items-center gap-2 text-[10px] text-[#fbc02d] [text-shadow:1.5px_1.5px_0px_#1f1f1f]">
+            <div className="space-y-4 rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
+              <h3 className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
                 <FolderOpen className="h-4 w-4 text-zinc-400" />
-                <span>BEDROCK SKINPACK PACKAGING MANIFEST SCHEMA</span>
+                <span>Bedrock Skinpack Packaging Manifest Schema</span>
               </h3>
-              <div className="grid grid-cols-1 gap-4 font-mono text-xs text-zinc-400 md:grid-cols-2">
-                <div className="space-y-2 border-2 border-black bg-[#151617] p-3 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
-                  <p className="font-semibold text-zinc-300">
-                    📂 File Manifest Structure
+              <div className="grid grid-cols-1 gap-4 font-sans text-xs text-zinc-400 md:grid-cols-2">
+                <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
+                  <p className="text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
+                    📁 File Manifest Structure
                   </p>
-                  <ul className="list-disc space-y-1 pl-4 text-[11px]">
+                  <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
                     <li>
                       <code>manifest.json</code>: General metadata structure.
                     </li>
@@ -667,11 +666,11 @@ export default function SkinPackMaker() {
                     </li>
                   </ul>
                 </div>
-                <div className="space-y-2 border-2 border-black bg-[#151617] p-3 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.8)]">
-                  <p className="font-semibold text-zinc-300">
+                <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
+                  <p className="text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
                     🧩 Geometric Parameters
                   </p>
-                  <ul className="list-disc space-y-1 pl-4 text-[11px]">
+                  <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
                     <li>
                       <strong>Steve:</strong>{" "}
                       <code>geometry.humanoid.custom</code> (4px arms).
@@ -680,7 +679,7 @@ export default function SkinPackMaker() {
                       <strong>Alex:</strong>{" "}
                       <code>geometry.humanoid.customSlim</code> (3px arms).
                     </li>
-                    <li>Supports 64x64px or 64x32px PNG images.</li>
+                    <li>Supports standard 64x64px or 64x32px PNG images.</li>
                   </ul>
                 </div>
               </div>
@@ -733,12 +732,12 @@ function TextureUploadBox({ skin, onUpload }: TextureUploadBoxProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       onClick={() => fileInputRef.current?.click()}
-      className={`cursor-pointer border-2 border-dashed p-6 text-center transition-all ${
+      className={`cursor-pointer rounded-[4px] border border-dashed p-6 text-center transition-all ${
         isDragOver
-          ? "border-amber-300 bg-amber-500/5"
+          ? "border-[#00e676] bg-[#00e676]/5 shadow-[0_0_12px_rgba(0,230,118,0.1)]"
           : skin.textureFile
-            ? "border-[#3c8527] bg-[#151617]"
-            : "border-zinc-700 bg-[#151617]/50 hover:border-zinc-500 hover:bg-[#151617]/80"
+            ? "border-[#00e676]/40 bg-white/[0.02]"
+            : "border-zinc-800 bg-[#121212]/50 hover:border-[#00e676]/30 hover:bg-[#121212]/80"
       }`}
     >
       <input
@@ -748,18 +747,18 @@ function TextureUploadBox({ skin, onUpload }: TextureUploadBoxProps) {
         accept="image/png"
         className="hidden"
       />
-      <div className="flex flex-col items-center justify-center gap-2">
-        <div className="border-2 border-black bg-[#4c4c4c] p-3 text-zinc-300 shadow-[inset_-2px_-2px_0px_#1e1e1e,inset_2px_2px_0px_#8b8b8b]">
-          <Upload className="h-5 w-5" />
+      <div className="flex flex-col items-center justify-center gap-3">
+        <div className="rounded-[4px] border border-zinc-800 bg-[#1a1a1a] p-2.5 text-zinc-400 transition-all group-hover:text-[#00e676]">
+          <Upload className="h-5 w-5 text-zinc-500" />
         </div>
         <div>
           {skin.textureFile ? (
             <>
-              <p className="font-pixel text-xs text-[#3c8527]">
-                TEXTURE LOADED!
+              <p className="text-xs font-bold tracking-[0.05em] text-[#00e676] uppercase">
+                TEXTURE LOADED
               </p>
               <p
-                className="mx-auto mt-1.5 max-w-[280px] truncate font-mono text-[10px] text-zinc-500"
+                className="mx-auto mt-1.5 max-w-[280px] truncate font-mono text-[9px] text-zinc-500"
                 title={skin.textureFile.name}
               >
                 {skin.textureFile.name}
@@ -767,10 +766,10 @@ function TextureUploadBox({ skin, onUpload }: TextureUploadBoxProps) {
             </>
           ) : (
             <>
-              <p className="font-pixel text-xs text-zinc-300">
+              <p className="text-xs font-semibold tracking-[0.05em] text-zinc-300 uppercase">
                 DRAG & DROP SKIN PNG HERE
               </p>
-              <p className="mt-1.5 font-mono text-[10px] text-zinc-500">
+              <p className="mt-1.5 font-sans text-[10px] text-zinc-600">
                 or click to browse files
               </p>
             </>
@@ -788,12 +787,6 @@ interface SkinPreviewCanvasProps {
   skin: SkinItem
 }
 
-interface ExtendedCanvasRenderingContext2D extends CanvasRenderingContext2D {
-  mozImageSmoothingEnabled?: boolean
-  webkitImageSmoothingEnabled?: boolean
-  msImageSmoothingEnabled?: boolean
-}
-
 function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -803,8 +796,8 @@ function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
     h: number
   ) => {
     // Steve silhouette or empty placeholder grid
-    ctx.strokeStyle = "#404040"
-    ctx.lineWidth = 2
+    ctx.strokeStyle = "#202020"
+    ctx.lineWidth = 1.5
     ctx.setLineDash([4, 4])
 
     // Draw guide lines
@@ -823,8 +816,8 @@ function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
     ctx.strokeRect(w / 2, 140, 24, 72)
 
     // Center text
-    ctx.fillStyle = "#555555"
-    ctx.font = "8px 'Press Start 2P', system-ui"
+    ctx.fillStyle = "#444"
+    ctx.font = "bold 9px system-ui, sans-serif"
     ctx.textAlign = "center"
     ctx.setLineDash([])
     ctx.fillText("AWAITING PNG", w / 2, h / 2 + 30)
