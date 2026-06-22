@@ -1,7 +1,7 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
-import React, { useState, useRef } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import JSZip from "jszip"
 import {
   Sparkles,
