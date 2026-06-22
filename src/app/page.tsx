@@ -22,6 +22,13 @@ import {
 
 // Generate version 4 UUID
 function generateUUID(): string {
+  if (
+    typeof window !== "undefined" &&
+    window.crypto &&
+    typeof window.crypto.randomUUID === "function"
+  ) {
+    return window.crypto.randomUUID()
+  }
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0
     const v = c === "x" ? r : (r & 0x3) | 0x8
@@ -74,7 +81,7 @@ export default function SkinPackMaker() {
   }
 
   const addNewSkin = () => {
-    const id = Math.random().toString(36).substr(2, 9)
+    const id = Math.random().toString(36).slice(2, 11)
     const count = skins.length + 1
     const newSkin: SkinItem = {
       id,
@@ -91,6 +98,10 @@ export default function SkinPackMaker() {
 
   const removeSkin = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
+    const skinToRemove = skins.find((s) => s.id === id)
+    if (skinToRemove?.textureUrl) {
+      URL.revokeObjectURL(skinToRemove.textureUrl)
+    }
     const updatedSkins = skins.filter((s) => s.id !== id)
     setSkins(updatedSkins)
     if (selectedSkinId === id) {
@@ -108,12 +119,17 @@ export default function SkinPackMaker() {
       return
     }
 
+    const existingSkin = skins.find((s) => s.id === id)
+    if (existingSkin?.textureUrl) {
+      URL.revokeObjectURL(existingSkin.textureUrl)
+    }
+
     // Create a local URL for rendering preview
     const url = URL.createObjectURL(file)
     updateSkin(id, {
       textureFile: file,
       textureUrl: url,
-      textureName: file.name.replace(/\s+/g, "_"),
+      textureName: `skin_${id}.png`, // unique name based on id to prevent collision & traversal
     })
   }
 
@@ -145,17 +161,18 @@ export default function SkinPackMaker() {
         .split(".")
         .map((num) => parseInt(num, 10) || 0)
       while (versionArr.length < 3) versionArr.push(0)
+      const finalVersion = versionArr.slice(0, 3)
 
       // 1. manifest.json
       const manifestJson = {
         header: {
           name: "pack.name",
-          version: versionArr,
+          version: finalVersion,
           uuid: uuidHeader,
         },
         modules: [
           {
-            version: versionArr,
+            version: finalVersion,
             type: "skin_pack",
             uuid: uuidModule,
           },
@@ -830,6 +847,7 @@ function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
   }
 
   useEffect(() => {
+    let active = true
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext("2d")
@@ -847,6 +865,7 @@ function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
     const img = new Image()
     img.src = skin.textureUrl
     img.onload = () => {
+      if (!active) return
       // Clear again
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -951,7 +970,12 @@ function SkinPreviewCanvas({ skin }: SkinPreviewCanvasProps) {
     }
 
     img.onerror = () => {
+      if (!active) return
       drawPlaceholder(ctx, canvas.width, canvas.height)
+    }
+
+    return () => {
+      active = false
     }
   }, [skin.textureUrl, skin.geometry])
 
