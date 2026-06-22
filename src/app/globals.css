@@ -1,10 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-pixel: "Press Start 2P", system-ui;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-roboto);
