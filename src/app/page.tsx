@@ -314,38 +314,48 @@ export default function SkinPackMaker() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0a0a0a] pb-12 font-sans text-zinc-100 antialiased selection:bg-[#00e676] selection:text-black">
-      <div className="pointer-events-none absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-[#00e676]/5 blur-[160px]" />
+    <div className="bg-background/95 text-foreground selection:bg-primary/20 selection:text-primary relative min-h-screen w-full overflow-x-hidden pb-12 font-sans antialiased">
+      {/* Background glow meshes - Moss Green & Earthen Clay */}
+      <div className="bg-primary/3 pointer-events-none absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full blur-[140px]" />
+      <div className="pointer-events-none absolute right-1/4 bottom-0 h-[600px] w-[600px] rounded-full bg-amber-600/2 blur-[180px]" />
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         {/* Banner Title */}
-        <div className="mb-8 flex flex-col justify-between gap-4 border-b border-[#00e676]/20 pb-6 sm:flex-row sm:items-center">
+        <div className="border-border mb-8 flex flex-col justify-between gap-4 border-b pb-6 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="rounded-[4px] border border-[#00e676]/30 bg-[#1a1a1a] p-2 text-[#00e676] shadow-[0_0_12px_rgba(0,230,118,0.15)]">
+            <div className="border-primary/30 bg-card text-primary rounded-[4px] border p-2 shadow-[0_0_12px_rgba(0,230,118,0.15)] transition-transform hover:rotate-3">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
               <h1 className="font-sans text-sm font-semibold tracking-[0.1em] text-white uppercase">
                 MC Bedrock Skin Pack Maker
               </h1>
-              <p className="font-mono text-[10px] tracking-wider text-zinc-500">
-                OREUI EDITION v1.21+
-              </p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-muted-foreground font-mono text-[9px] tracking-wider uppercase">
+                  OREUI MODERN EDITION
+                </span>
+                <span className="bg-primary/60 h-1 w-1 rounded-full" />
+                <span className="bg-primary/10 border-primary/20 text-primary rounded-[2px] border px-1.5 py-0.5 text-[8px] font-bold">
+                  v1.21+ COMPATIBLE
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          {/* Left panel: configurations */}
           <section className="space-y-6 lg:col-span-4">
-            <div className="relative overflow-hidden rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
-              <div className="absolute top-0 left-0 h-[2px] w-full bg-[#00e676]" />
-              <h2 className="mb-5 flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
-                <Settings className="h-4 w-4 text-zinc-500" />
+            {/* Pack Settings Card */}
+            <div className="border-border bg-card hover:border-primary/25 relative overflow-hidden rounded-[4px] border p-6 shadow-md transition-all duration-350">
+              <div className="from-primary/80 absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r to-amber-600/40" />
+              <h2 className="text-primary mb-5 flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase">
+                <Settings className="text-muted-foreground h-4 w-4" />
                 <span>Pack Settings</span>
               </h2>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                  <label className="text-muted-foreground mb-1.5 block text-[10px] font-semibold tracking-[0.1em] uppercase">
                     Pack Display Name
                   </label>
                   <input
@@ -353,11 +363,12 @@ export default function SkinPackMaker() {
                     value={localPackName}
                     onChange={(e) => setLocalPackName(e.target.value)}
                     onBlur={() => setPackName(localPackName)}
-                    className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
+                    className="border-border/80 bg-background/50 focus:border-primary focus:ring-primary/20 w-full rounded-[4px] border px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:ring-1"
+                    placeholder="Enter pack name..."
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                  <label className="text-muted-foreground mb-1.5 block text-[10px] font-semibold tracking-[0.1em] uppercase">
                     Pack Version
                   </label>
                   <input
@@ -365,21 +376,24 @@ export default function SkinPackMaker() {
                     value={localPackVersion}
                     onChange={(e) => setLocalPackVersion(e.target.value)}
                     onBlur={() => setPackVersion(localPackVersion)}
-                    className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
+                    className="border-border/80 bg-background/50 focus:border-primary focus:ring-primary/20 w-full rounded-[4px] border px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:ring-1"
+                    placeholder="1.0.0"
                   />
                 </div>
               </div>
             </div>
-            <div className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
+
+            {/* Skins List Card */}
+            <div className="border-border bg-card hover:border-primary/25 rounded-[4px] border p-6 shadow-md transition-all duration-350">
               <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
-                  <User className="h-4 w-4 text-zinc-500" />
+                <h2 className="text-primary flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase">
+                  <User className="text-muted-foreground h-4 w-4" />
                   <span>Skins ({skins.length})</span>
                 </h2>
                 <div className="flex gap-2">
-                  <label className="flex cursor-pointer items-center justify-center gap-1 rounded-[4px] bg-[#00e676] px-3 py-1.5 text-[10px] font-bold text-black transition-all hover:bg-[#00c853]">
+                  <label className="bg-primary text-primary-foreground hover:bg-primary/90 glow-moss flex cursor-pointer items-center justify-center gap-1 rounded-[4px] px-3 py-1.5 text-[10px] font-bold transition-all">
                     <Upload className="h-3.5 w-3.5 stroke-[2.5]" />
-                    <span>ADD PNG SKIN</span>
+                    <span>ADD PNG</span>
                     <input
                       type="file"
                       accept="image/png"
@@ -390,7 +404,7 @@ export default function SkinPackMaker() {
                   </label>
                   <button
                     onClick={() => addNewSkin()}
-                    className="flex items-center justify-center rounded-[4px] border border-zinc-800 bg-[#121212] px-2.5 py-1.5 text-[10px] font-bold text-zinc-400 hover:border-zinc-700 hover:text-white"
+                    className="border-border bg-background text-muted-foreground hover:border-primary/30 flex items-center justify-center rounded-[4px] border px-2.5 py-1.5 text-[10px] font-bold transition-all hover:text-white"
                     title="Add empty slot"
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -402,49 +416,77 @@ export default function SkinPackMaker() {
                   <div
                     key={skin.id}
                     onClick={() => setSelectedSkinId(skin.id)}
-                    className={`flex cursor-pointer items-center justify-between rounded-[4px] border p-3 transition-all ${
+                    className={`group/skin flex cursor-pointer items-center justify-between rounded-[4px] border p-3 transition-all ${
                       selectedSkinId === skin.id
-                        ? "border-[#00e676] bg-white/[0.03]"
-                        : "border-zinc-800/80 bg-[#141414]"
+                        ? "border-primary bg-primary/5 shadow-[0_0_10px_rgba(0,230,118,0.06)]"
+                        : "border-border/60 bg-background/30 hover:border-primary/30"
                     }`}
                   >
-                    <span className="truncate text-xs font-semibold text-zinc-200">
-                      {skin.name}
-                    </span>
-                    <button
-                      onClick={(e) => removeSkin(skin.id, e)}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <div
+                        className={`h-2 w-2 rounded-full ${
+                          skin.textureFile ? "bg-primary" : "bg-amber-600/40"
+                        }`}
+                      />
+                      <span className="truncate text-xs font-semibold text-zinc-200">
+                        {skin.name}
+                      </span>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span
+                        className={`rounded-[2px] px-1.5 py-0.5 text-[8px] font-bold ${
+                          skin.type === "paid"
+                            ? "border border-amber-500/25 bg-amber-500/10 text-amber-400"
+                            : "bg-primary/10 border-primary/20 text-primary border"
+                        }`}
+                      >
+                        {skin.type.toUpperCase()}
+                      </span>
+                      <button
+                        onClick={(e) => removeSkin(skin.id, e)}
+                        className="text-muted-foreground p-0.5 opacity-30 transition-all hover:text-red-400 hover:opacity-100"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 text-center shadow-md">
+
+            {/* Export Card */}
+            <div className="border-border bg-card hover:border-primary/25 rounded-[4px] border p-6 text-center shadow-md transition-all duration-350">
               <button
                 onClick={handleExport}
                 disabled={exporting || skins.length === 0}
-                className="w-full cursor-pointer rounded-[4px] bg-[#00e676] py-3 text-xs font-bold tracking-[0.1em] text-black uppercase hover:bg-[#00c853] disabled:bg-zinc-800"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground glow-moss w-full cursor-pointer rounded-[4px] py-3 text-xs font-bold tracking-[0.1em] uppercase transition-all duration-200"
               >
                 <span>{exporting ? "Generating..." : "Export .mcpack"}</span>
               </button>
               {exportMessage && (
-                <p className="mt-3 text-xs text-zinc-400">{exportMessage}</p>
+                <p className="text-muted-foreground mt-3 animate-pulse text-xs">
+                  {exportMessage}
+                </p>
               )}
             </div>
           </section>
+
+          {/* Right panel: detail workspace */}
           <section className="space-y-6 lg:col-span-8">
             {currentSkin ? (
               <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-                <div className="flex flex-col items-center justify-between rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md md:col-span-5">
-                  <div className="mb-4 flex w-full items-center justify-between border-b border-zinc-800 pb-2.5">
-                    <h3 className="text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                {/* 2D Projection view */}
+                <div className="border-border bg-card hover:border-primary/25 flex flex-col items-center justify-between rounded-[4px] border p-6 shadow-md transition-all duration-350 md:col-span-5">
+                  <div className="border-border mb-4 flex w-full items-center justify-between border-b pb-2.5">
+                    <h3 className="text-muted-foreground text-[10px] font-semibold tracking-[0.1em] uppercase">
                       Skin Projection
                     </h3>
+                    <span className="bg-primary/10 border-primary/20 text-primary rounded-[2px] border px-1 font-mono text-[8px] uppercase">
+                      2D Live View
+                    </span>
                   </div>
-                  <div className="group relative rounded-[4px] border border-zinc-800 bg-[#121212] p-4 shadow-inner transition-all duration-300 hover:border-[#00e676]/30">
-                    <div className="pointer-events-none absolute inset-0 rounded-[4px] bg-gradient-to-tr from-[#00e676]/2 to-transparent" />
+                  <div className="group border-border bg-background hover:border-primary/30 relative rounded-[4px] border p-4 shadow-inner transition-all duration-300">
+                    <div className="from-primary/3 pointer-events-none absolute inset-0 rounded-[4px] bg-gradient-to-tr to-transparent" />
                     <SkinPreviewCanvas
                       textureUrl={currentSkin.textureUrl}
                       geometry={currentSkin.geometry}
@@ -454,27 +496,27 @@ export default function SkinPackMaker() {
                     <p className="text-xs font-semibold tracking-wide text-white">
                       {currentSkin.name}
                     </p>
-                    <p className="max-w-[200px] text-[9px] leading-4 text-zinc-500">
+                    <p className="text-muted-foreground max-w-[200px] text-[9px] leading-4">
                       Real-time projection showing the loaded head, body, limbs,
                       and clothing layers.
                     </p>
                   </div>
                 </div>
 
-                {/* Edit Form (Columns: 7) */}
-                <div className="flex flex-col justify-between rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md md:col-span-7">
+                {/* Edit Form */}
+                <div className="border-border bg-card hover:border-primary/25 flex flex-col justify-between rounded-[4px] border p-6 shadow-md transition-all duration-350 md:col-span-7">
                   <div className="space-y-5">
-                    <div className="border-b border-zinc-800 pb-3.5">
+                    <div className="border-border border-b pb-3.5">
                       <h3 className="text-xs font-semibold tracking-[0.1em] text-zinc-200 uppercase">
                         Edit Skin Metadata
                       </h3>
-                      <p className="mt-1 text-[10px] text-zinc-500">
+                      <p className="text-muted-foreground mt-1 text-[10px]">
                         Configure skin settings for the Bedrock metadata bundle
                       </p>
                     </div>
 
                     <div>
-                      <label className="mb-2 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                      <label className="text-muted-foreground mb-2 block text-[10px] font-semibold tracking-[0.1em] uppercase">
                         Skin Display Name
                       </label>
                       <input
@@ -488,12 +530,12 @@ export default function SkinPackMaker() {
                             })
                           }
                         }}
-                        className="w-full rounded-[4px] border border-[#00e676]/20 bg-[#121212] px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/30"
+                        className="border-border/80 bg-background/50 focus:border-primary focus:ring-primary/20 w-full rounded-[4px] border px-3 py-2 font-sans text-xs text-white shadow-inner transition-all outline-none focus:ring-1"
                       />
                     </div>
 
                     <div>
-                      <label className="mb-2.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                      <label className="text-muted-foreground mb-2.5 block text-[10px] font-semibold tracking-[0.1em] uppercase">
                         Model Geometry (Arm Width)
                       </label>
                       <div className="grid grid-cols-2 gap-3">
@@ -506,14 +548,14 @@ export default function SkinPackMaker() {
                           }
                           className={`cursor-pointer rounded-[4px] border p-3 text-left transition-all ${
                             currentSkin.geometry === "geometry.humanoid.custom"
-                              ? "border-[#00e676] bg-white/[0.03] text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
-                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
+                              ? "border-primary bg-primary/5 text-primary shadow-[0_0_10px_rgba(0,230,118,0.08)]"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/30"
                           }`}
                         >
                           <p className="text-[10px] font-bold tracking-[0.05em] uppercase">
                             Steve model
                           </p>
-                          <span className="mt-1 block font-sans text-[9px] text-zinc-500">
+                          <span className="text-muted-foreground mt-1 block font-sans text-[9px]">
                             Standard size (4px arms)
                           </span>
                         </button>
@@ -527,14 +569,14 @@ export default function SkinPackMaker() {
                           className={`cursor-pointer rounded-[4px] border p-3 text-left transition-all ${
                             currentSkin.geometry ===
                             "geometry.humanoid.customSlim"
-                              ? "border-[#00e676] bg-white/[0.03] text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
-                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
+                              ? "border-primary bg-primary/5 text-primary shadow-[0_0_10px_rgba(0,230,118,0.08)]"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/30"
                           }`}
                         >
                           <p className="text-[10px] font-bold tracking-[0.05em] uppercase">
                             Alex model
                           </p>
-                          <span className="mt-1 block font-sans text-[9px] text-zinc-500">
+                          <span className="text-muted-foreground mt-1 block font-sans text-[9px]">
                             Slim size (3px arms)
                           </span>
                         </button>
@@ -542,8 +584,8 @@ export default function SkinPackMaker() {
                     </div>
 
                     <div>
-                      <label className="mb-2.5 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
-                        Accessibility Tier
+                      <label className="text-muted-foreground mb-2.5 block text-[10px] font-semibold tracking-[0.1em] uppercase">
+                        Accessibility Tier (Minecraft Store Type)
                       </label>
                       <div className="grid grid-cols-2 gap-3">
                         <button
@@ -553,11 +595,11 @@ export default function SkinPackMaker() {
                           }
                           className={`cursor-pointer rounded-[4px] border p-2.5 text-center text-[9px] font-semibold tracking-[0.05em] uppercase transition-all ${
                             currentSkin.type === "free"
-                              ? "border-[#00e676] bg-[#00e676]/10 text-[#00e676] shadow-[0_0_10px_rgba(0,230,118,0.1)]"
-                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-[#00e676]/35"
+                              ? "border-primary bg-primary/10 text-primary glow-moss shadow-[0_0_10px_rgba(0,230,118,0.1)]"
+                              : "border-border bg-background text-muted-foreground hover:border-primary/25"
                           }`}
                         >
-                          FREE SKIN
+                          FREE (EMERALD TIER)
                         </button>
                         <button
                           type="button"
@@ -566,18 +608,18 @@ export default function SkinPackMaker() {
                           }
                           className={`cursor-pointer rounded-[4px] border p-2.5 text-center text-[9px] font-semibold tracking-[0.05em] uppercase transition-all ${
                             currentSkin.type === "paid"
-                              ? "border-blue-500/40 bg-blue-500/10 text-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
-                              : "border-zinc-800 bg-[#121212] text-zinc-400 hover:border-blue-500/35"
+                              ? "glow-clay border-amber-500/40 bg-amber-500/10 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
+                              : "border-border bg-background text-muted-foreground hover:border-amber-500/25"
                           }`}
                         >
-                          PAID SKIN
+                          PAID (GOLD TIER)
                         </button>
                       </div>
                     </div>
 
                     {/* Image Upload Area */}
                     <div>
-                      <label className="mb-2 block text-[10px] font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+                      <label className="text-muted-foreground mb-2 block text-[10px] font-semibold tracking-[0.1em] uppercase">
                         Minecraft Skin Texture (PNG)
                       </label>
                       <TextureUploadBox
@@ -589,8 +631,8 @@ export default function SkinPackMaker() {
                     </div>
                   </div>
 
-                  <div className="mt-6 flex items-center gap-2 border-t border-zinc-800/80 pt-4 font-sans text-[10px] text-zinc-500">
-                    <Info className="h-4 w-4 shrink-0 text-[#00e676]" />
+                  <div className="border-border/80 text-muted-foreground mt-6 flex items-center gap-2 border-t pt-4 font-sans text-[10px]">
+                    <Info className="text-primary h-4 w-4 shrink-0" />
                     <span>
                       Upload a standard 64x64 or 64x32 PNG skin texture file.
                     </span>
@@ -598,30 +640,31 @@ export default function SkinPackMaker() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-[4px] border border-dashed border-zinc-800 bg-[#1a1a1a] p-12 text-center text-zinc-500 shadow-md">
-                <HelpCircle className="mx-auto mb-3 h-12 w-12 text-zinc-600" />
-                <p className="text-xs font-semibold tracking-[0.1em] text-zinc-400 uppercase">
+              <div className="border-border bg-card text-muted-foreground hover:border-primary/25 rounded-[4px] border border-dashed p-12 text-center shadow-md transition-all duration-350">
+                <HelpCircle className="text-muted/80 mx-auto mb-3 h-12 w-12" />
+                <p className="text-xs font-semibold tracking-[0.1em] text-zinc-300 uppercase">
                   NO SKIN SELECTED
                 </p>
-                <p className="mt-1 font-sans text-[10px] text-zinc-500">
-                  Select a skin from the panel lists or click ADD SKIN.
+                <p className="text-muted-foreground mt-1 font-sans text-[10px]">
+                  Select a skin from the panel lists or click ADD PNG to create
+                  a new skin slot.
                 </p>
               </div>
             )}
 
-            {/* Reference info guidelines Accordion/Card */}
-            <div className="space-y-4 rounded-[4px] border border-[#00e676]/20 bg-[#1a1a1a] p-6 shadow-md">
-              <h3 className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] text-[#00e676] uppercase">
-                <FolderOpen className="h-4 w-4 text-zinc-400" />
+            {/* Reference info guidelines Card */}
+            <div className="border-border bg-card hover:border-primary/25 space-y-4 rounded-[4px] border p-6 shadow-md transition-all duration-350">
+              <h3 className="text-primary flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase">
+                <FolderOpen className="text-muted-foreground h-4 w-4" />
                 <span>Bedrock Skinpack Packaging Manifest Schema</span>
               </h3>
-              <div className="grid grid-cols-1 gap-4 font-sans text-xs text-zinc-400 md:grid-cols-2">
-                <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
+              <div className="text-muted-foreground grid grid-cols-1 gap-4 font-sans text-xs md:grid-cols-2">
+                <div className="border-border/60 bg-background/20 space-y-2 rounded-[4px] border p-4">
                   <p className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
-                    <FileJson className="h-3.5 w-3.5 text-zinc-500" />
+                    <FileJson className="text-muted-foreground h-3.5 w-3.5" />
                     <span>File Manifest Structure</span>
                   </p>
-                  <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
+                  <ul className="text-muted-foreground list-disc space-y-1 pl-4 text-[11px]">
                     <li>
                       <code>manifest.json</code>: General metadata structure.
                     </li>
@@ -635,12 +678,12 @@ export default function SkinPackMaker() {
                     </li>
                   </ul>
                 </div>
-                <div className="space-y-2 rounded-[4px] border border-zinc-800/60 bg-white/[0.02] p-4">
+                <div className="border-border/60 bg-background/20 space-y-2 rounded-[4px] border p-4">
                   <p className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.05em] text-zinc-200 uppercase">
-                    <Puzzle className="h-3.5 w-3.5 text-zinc-500" />
+                    <Puzzle className="text-muted-foreground h-3.5 w-3.5" />
                     <span>Geometric Parameters</span>
                   </p>
-                  <ul className="list-disc space-y-1 pl-4 text-[11px] text-zinc-500">
+                  <ul className="text-muted-foreground list-disc space-y-1 pl-4 text-[11px]">
                     <li>
                       <strong>Steve:</strong>{" "}
                       <code>geometry.humanoid.custom</code> (4px arms).
