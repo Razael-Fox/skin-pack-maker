@@ -10,32 +10,31 @@
   --color-foreground: var(--foreground);
   --font-sans: "Inter", var(--font-roboto);
   --font-mono: var(--font-geist-mono);
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
 }
 
 :root {
-  --background: oklch(0.15 0 0); /* Solid #0a0a0a roughly */
-  --foreground: oklch(0.95 0 0);
-  --border: oklch(1 0 0 / 0.1);
+  --background: oklch(0.97 0.005 286); /* Smoke White */
+  --foreground: oklch(0.2 0.01 286); /* Dark Gray */
+  --border: oklch(0 0 0 / 0.08);
 }
 
 .dark {
-  --background: oklch(0.15 0 0);
-  --foreground: oklch(0.95 0 0);
+  --background: oklch(0.12 0.01 286); /* Dark Gray */
+  --foreground: oklch(0.96 0.005 286); /* Smoke White */
   --border: oklch(1 0 0 / 0.1);
 }
 
 @layer base {
   * {
-    @apply border-white/10 transition-colors duration-200 outline-none;
+    @apply border-zinc-200 transition-colors duration-200 outline-none dark:border-white/10;
   }
   body {
-    @apply bg-[#0a0a0a] text-white selection:bg-blue-500/30 selection:text-white;
+    @apply bg-slate-50 text-zinc-900 selection:bg-purple-500/30 selection:text-white dark:bg-[#0a0a0a] dark:text-white;
     background-image: none;
-    background-color: #0a0a0a;
   }
   html {
     @apply font-sans;
@@ -51,10 +50,10 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(139, 92, 246, 0.15);
     border-radius: 4px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(139, 92, 246, 0.35);
   }
 }

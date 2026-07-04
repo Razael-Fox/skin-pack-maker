@@ -22,80 +22,56 @@ export function useSkinPack() {
   const [uuidHeader] = useState(() => generateUUID())
   const [uuidModule] = useState(() => generateUUID())
 
-  const [skins, setSkins] = useState<SkinItem[]>(() => [
-    {
-      id: "skin-1",
-      name: "Skin 1",
-      geometry: "geometry.humanoid.custom",
-      type: "free",
-      textureName: "skin_1.png",
-      textureFile: null,
-      textureUrl: "",
-    },
-  ])
-  const [selectedSkinId, setSelectedSkinId] = useState<string | null>("skin-1")
+  const [skins, setSkins] = useState<SkinItem[]>(() => [])
+  const [selectedSkinId, setSelectedSkinId] = useState<string | null>(null)
 
   const [exporting, setExporting] = useState(false)
   const [exportMessage, setExportMessage] = useState("")
 
-  const addNewSkin = (file?: File) => {
+  const addNewSkin = (file: File) => {
     const id = Math.random().toString(36).slice(2, 11)
     const count = skins.length + 1
 
-    if (file) {
-      if (!file.type.includes("image/png")) {
-        alert("Please upload a PNG image file!")
-        return
-      }
-      const url = URL.createObjectURL(file)
-      const img = new Image()
-      img.src = url
-      img.onload = () => {
-        let detectedGeometry: GeometryType = "geometry.humanoid.custom"
-        try {
-          const tempCanvas = document.createElement("canvas")
-          tempCanvas.width = img.naturalWidth
-          tempCanvas.height = img.naturalHeight
-          const tempCtx = tempCanvas.getContext("2d")
-          if (tempCtx) {
-            tempCtx.drawImage(img, 0, 0)
-            const imgData = tempCtx.getImageData(47, 20, 1, 12)
-            let hasSolidPixel = false
-            for (let i = 3; i < imgData.data.length; i += 4) {
-              if (imgData.data[i] > 0) {
-                hasSolidPixel = true
-                break
-              }
-            }
-            if (!hasSolidPixel && img.naturalHeight === 64) {
-              detectedGeometry = "geometry.humanoid.customSlim"
+    if (!file.type.includes("image/png")) {
+      alert("Please upload a PNG image file!")
+      return
+    }
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.src = url
+    img.onload = () => {
+      let detectedGeometry: GeometryType = "geometry.humanoid.custom"
+      try {
+        const tempCanvas = document.createElement("canvas")
+        tempCanvas.width = img.naturalWidth
+        tempCanvas.height = img.naturalHeight
+        const tempCtx = tempCanvas.getContext("2d")
+        if (tempCtx) {
+          tempCtx.drawImage(img, 0, 0)
+          const imgData = tempCtx.getImageData(47, 20, 1, 12)
+          let hasSolidPixel = false
+          for (let i = 3; i < imgData.data.length; i += 4) {
+            if (imgData.data[i] > 0) {
+              hasSolidPixel = true
+              break
             }
           }
-        } catch (e) {
-          console.warn("Could not auto-detect geometry:", e)
+          if (!hasSolidPixel && img.naturalHeight === 64) {
+            detectedGeometry = "geometry.humanoid.customSlim"
+          }
         }
-
-        const newSkin: SkinItem = {
-          id,
-          name: file.name.replace(/\.[^/.]+$/, "") || `Skin ${count}`,
-          geometry: detectedGeometry,
-          type: "free",
-          textureName: `skin_${id}.png`,
-          textureFile: file,
-          textureUrl: url,
-        }
-        setSkins((prev) => [...prev, newSkin])
-        setSelectedSkinId(id)
+      } catch (e) {
+        console.warn("Could not auto-detect geometry:", e)
       }
-    } else {
+
       const newSkin: SkinItem = {
         id,
-        name: `Skin ${count}`,
-        geometry: "geometry.humanoid.custom",
+        name: file.name.replace(/\.[^/.]+$/, "") || `Skin ${count}`,
+        geometry: detectedGeometry,
         type: "free",
         textureName: `skin_${id}.png`,
-        textureFile: null,
-        textureUrl: "",
+        textureFile: file,
+        textureUrl: url,
       }
       setSkins((prev) => [...prev, newSkin])
       setSelectedSkinId(id)

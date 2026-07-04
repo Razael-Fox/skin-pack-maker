@@ -1,11 +1,11 @@
-import { User, Plus, Trash2, Upload } from "lucide-react"
+import { User, Trash2, Upload } from "lucide-react"
 import { SkinItem } from "../types"
 
 interface SkinListProps {
   skins: SkinItem[]
   selectedSkinId: string | null
   onSelectSkin: (id: string) => void
-  onAddSkin: (file?: File) => void
+  onAddSkin: (file: File) => void
   onRemoveSkin: (id: string, e: React.MouseEvent) => void
 }
 
@@ -23,14 +23,14 @@ export function SkinList({
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/20 backdrop-blur-md transition-all duration-300 hover:border-white/20">
+    <div className="rounded-xl border border-zinc-200 bg-white/60 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-zinc-300 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-white/20">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-white/90 uppercase">
-          <User className="h-4 w-4 text-white/50" />
+        <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
+          <User className="h-4 w-4 text-zinc-400 dark:text-white/50" />
           <span>Skins ({skins.length})</span>
         </h2>
         <div className="flex gap-2">
-          <label className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-blue-500 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-600">
+          <label className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700">
             <Upload className="h-3.5 w-3.5" />
             <span>ADD PNG</span>
             <input
@@ -41,13 +41,6 @@ export function SkinList({
               onChange={handleAddFileInput}
             />
           </label>
-          <button
-            onClick={() => onAddSkin()}
-            className="flex items-center justify-center rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-white/70 transition-all hover:bg-white/10 hover:text-white"
-            title="Add empty slot"
-          >
-            <Plus className="h-3.5 w-3.5" />
-          </button>
         </div>
       </div>
       <div className="custom-scrollbar max-h-[350px] space-y-2 overflow-y-auto pr-2">
@@ -57,17 +50,19 @@ export function SkinList({
             onClick={() => onSelectSkin(skin.id)}
             className={`group/skin flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all duration-200 ${
               selectedSkinId === skin.id
-                ? "border-blue-500/50 bg-blue-500/10 shadow-[0_0_12px_rgba(59,130,246,0.15)]"
-                : "border-white/5 bg-white/5 hover:border-white/20 hover:bg-white/10"
+                ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
+                : "border-zinc-100 bg-zinc-50 hover:border-zinc-200 hover:bg-zinc-100 dark:border-white/5 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10"
             }`}
           >
             <div className="flex min-w-0 items-center gap-3">
               <div
                 className={`h-2.5 w-2.5 rounded-full shadow-inner ${
-                  skin.textureFile ? "bg-blue-400" : "bg-white/20"
+                  skin.textureFile
+                    ? "bg-purple-500"
+                    : "bg-zinc-300 dark:bg-white/20"
                 }`}
               />
-              <span className="truncate text-sm font-medium text-white/90">
+              <span className="truncate text-sm font-medium text-zinc-800 dark:text-white/90">
                 {skin.name}
               </span>
             </div>
@@ -75,15 +70,15 @@ export function SkinList({
               <span
                 className={`rounded px-1.5 py-0.5 text-[9px] font-bold tracking-wider ${
                   skin.type === "paid"
-                    ? "border border-amber-500/30 bg-amber-500/20 text-amber-300"
-                    : "border border-blue-500/30 bg-blue-500/20 text-blue-300"
+                    ? "border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300"
+                    : "border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
                 }`}
               >
                 {skin.type.toUpperCase()}
               </span>
               <button
                 onClick={(e) => onRemoveSkin(skin.id, e)}
-                className="p-1 text-white/30 opacity-0 transition-all group-hover/skin:opacity-100 hover:text-red-400"
+                className="p-1 text-zinc-400 opacity-60 transition-all hover:text-red-500 hover:opacity-100 dark:text-white/50"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
