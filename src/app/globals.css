@@ -8,148 +8,53 @@
   --font-pixel: var(--font-sans);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-roboto);
+  --font-sans: "Inter", var(--font-roboto);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-roboto);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 :root {
-  /* Defaulting directly to our Earth Dark Theme so it works out of the box */
-  --background: oklch(0.12 0.015 140); /* Deep earthy forest dark #090c09 */
-  --foreground: oklch(0.92 0.02 120); /* Light sage green / white */
-  --card: oklch(0.16 0.01 140); /* Deep forest card #121512 */
-  --card-foreground: oklch(0.92 0.02 120);
-  --popover: oklch(0.16 0.01 140);
-  --popover-foreground: oklch(0.92 0.02 120);
-  --primary: oklch(0.82 0.28 142); /* Vivid neon green / glowing moss #00e676 */
-  --primary-foreground: oklch(0.1 0.05 140);
-  --secondary: oklch(0.24 0.04 135); /* Forest dark moss */
-  --secondary-foreground: oklch(0.9 0.05 140);
-  --muted: oklch(0.2 0.02 140);
-  --muted-foreground: oklch(0.65 0.05 135);
-  --accent: oklch(0.25 0.06 140);
-  --accent-foreground: oklch(0.82 0.28 142);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
-  --border: oklch(0.24 0.04 140 / 0.3); /* Sage moss border line */
-  --input: oklch(0.2 0.03 140);
-  --ring: oklch(0.82 0.28 142);
-  --radius: 4px; /* Minecraft OreUI Sharp constraint (max 4px) */
-  --sidebar: oklch(0.15 0.02 140);
-  --sidebar-foreground: oklch(0.92 0.02 120);
-  --sidebar-primary: oklch(0.82 0.28 142);
-  --sidebar-primary-foreground: oklch(0.1 0.05 140);
-  --sidebar-accent: oklch(0.24 0.04 135);
-  --sidebar-accent-foreground: oklch(0.92 0.02 120);
-  --sidebar-border: oklch(0.24 0.04 140 / 0.3);
-  --sidebar-ring: oklch(0.82 0.28 142);
+  --background: oklch(0.15 0 0); /* Solid #0a0a0a roughly */
+  --foreground: oklch(0.95 0 0);
+  --border: oklch(1 0 0 / 0.1);
 }
 
 .dark {
-  --background: oklch(0.12 0.015 140);
-  --foreground: oklch(0.92 0.02 120);
-  --card: oklch(0.16 0.01 140);
-  --card-foreground: oklch(0.92 0.02 120);
-  --popover: oklch(0.16 0.01 140);
-  --popover-foreground: oklch(0.92 0.02 120);
-  --primary: oklch(0.82 0.28 142);
-  --primary-foreground: oklch(0.1 0.05 140);
-  --secondary: oklch(0.24 0.04 135);
-  --secondary-foreground: oklch(0.9 0.05 140);
-  --muted: oklch(0.2 0.02 140);
-  --muted-foreground: oklch(0.65 0.05 135);
-  --accent: oklch(0.25 0.06 140);
-  --accent-foreground: oklch(0.82 0.28 142);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 25);
-  --border: oklch(0.24 0.04 140 / 0.3);
-  --input: oklch(0.2 0.03 140);
-  --ring: oklch(0.82 0.28 142);
+  --background: oklch(0.15 0 0);
+  --foreground: oklch(0.95 0 0);
+  --border: oklch(1 0 0 / 0.1);
 }
 
 @layer base {
   * {
-    @apply border-border/80 outline-ring/50 transition-colors duration-150;
+    @apply border-white/10 transition-colors duration-200 outline-none;
   }
   body {
-    @apply bg-background text-foreground selection:bg-primary/30 selection:text-primary;
-    background-image:
-      radial-gradient(at 10% 20%, rgba(0, 230, 118, 0.03) 0px, transparent 50%),
-      radial-gradient(at 90% 80%, rgba(139, 92, 26, 0.03) 0px, transparent 50%);
-    background-attachment: fixed;
+    @apply bg-[#0a0a0a] text-white selection:bg-blue-500/30 selection:text-white;
+    background-image: none;
+    background-color: #0a0a0a;
   }
   html {
     @apply font-sans;
   }
 }
 
-/* Custom Earthy & OreUI Utilities */
 @layer utilities {
-  .glow-moss {
-    box-shadow:
-      0 0 15px -3px rgba(0, 230, 118, 0.15),
-      0 0 6px -2px rgba(0, 230, 118, 0.1);
-  }
-  .glow-moss-hover:hover {
-    box-shadow:
-      0 0 20px -1px rgba(0, 230, 118, 0.25),
-      0 0 8px -1px rgba(0, 230, 118, 0.15);
-    border-color: rgba(0, 230, 118, 0.4);
-  }
-  .glow-clay {
-    box-shadow:
-      0 0 15px -3px rgba(217, 119, 6, 0.12),
-      0 0 6px -2px rgba(217, 119, 6, 0.08);
-  }
-
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(20, 25, 20, 0.5);
+    background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 230, 118, 0.2);
-    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 230, 118, 0.4);
+    background: rgba(255, 255, 255, 0.2);
   }
 }
