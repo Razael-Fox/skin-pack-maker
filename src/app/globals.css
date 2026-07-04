@@ -34,7 +34,11 @@
   }
   body {
     @apply bg-slate-50 text-zinc-900 selection:bg-purple-500/30 selection:text-white dark:bg-[#0a0a0a] dark:text-white;
-    background-image: none;
+    background-image: url("/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
   html {
     @apply font-sans;

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles, HelpCircle, Sun, Moon } from "lucide-react"
+import { HelpCircle } from "lucide-react"
 
 import { useSkinPack } from "../hooks/useSkinPack"
 import { PackSettings } from "../components/PackSettings"
@@ -32,43 +32,13 @@ export default function SkinPackMaker() {
 
   return (
     <div
-      className={`relative min-h-screen w-full overflow-x-hidden bg-slate-50 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-[#0a0a0a] dark:text-white ${theme}`}
+      className={`relative min-h-screen w-full overflow-x-hidden bg-slate-50/70 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-[#0a0a0a]/85 dark:text-white ${theme}`}
     >
       {/* Background ambient glows */}
       <div className="pointer-events-none absolute top-[-20%] left-[-10%] h-[800px] w-[800px] rounded-full bg-purple-600/5 blur-[120px] dark:bg-purple-900/10" />
       <div className="pointer-events-none absolute right-[-10%] bottom-[-20%] h-[600px] w-[600px] rounded-full bg-indigo-600/5 blur-[120px] dark:bg-indigo-900/10" />
 
       <main className="relative z-10 mx-auto max-w-7xl px-6 py-10">
-        {/* Logo and Theme Toggle Bar */}
-        <div className="mb-8 flex items-center justify-between border-b border-zinc-200 pb-4 dark:border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 shadow-md">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <span className="text-sm font-bold tracking-wider text-zinc-900 uppercase dark:text-white">
-                Skin Pack Maker
-              </span>
-              <span className="ml-2.5 rounded bg-purple-500/10 px-1.5 py-0.5 text-[9px] font-bold text-purple-700 dark:bg-white/10 dark:text-white/70">
-                v1.21+ COMPATIBLE
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex cursor-pointer items-center justify-center rounded-lg border border-zinc-200 bg-white/60 p-2 text-zinc-600 shadow-sm transition-all hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
-            title={
-              theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
-            }
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4.5 w-4.5" />
-            ) : (
-              <Moon className="h-4.5 w-4.5" />
-            )}
-          </button>
-        </div>
-
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Left panel: configurations */}
           <section className="flex flex-col space-y-6 lg:col-span-4">
@@ -77,6 +47,8 @@ export default function SkinPackMaker() {
               packVersion={packVersion}
               onNameChange={setPackName}
               onVersionChange={setPackVersion}
+              theme={theme}
+              setTheme={setTheme}
             />
 
             <SkinList
