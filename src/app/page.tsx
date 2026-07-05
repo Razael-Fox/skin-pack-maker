@@ -69,9 +69,11 @@ export default function SkinPackMaker() {
         className="pointer-events-none fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: "url('/bg.jpg')" }}
       />
-      {/* Background ambient glows */}
-      <div className="pointer-events-none absolute top-[-20%] left-[-10%] h-[800px] w-[800px] rounded-full bg-purple-600/5 blur-[120px] dark:bg-purple-900/10" />
-      <div className="pointer-events-none absolute right-[-10%] bottom-[-20%] h-[600px] w-[600px] rounded-full bg-indigo-600/5 blur-[120px] dark:bg-indigo-900/10" />
+      {/* Background ambient glows wrapped to prevent vertical scroll overflow */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] h-[800px] w-[800px] rounded-full bg-purple-600/5 blur-[120px] dark:bg-purple-900/10" />
+        <div className="absolute right-[-10%] bottom-[-20%] h-[600px] w-[600px] rounded-full bg-indigo-600/5 blur-[120px] dark:bg-indigo-900/10" />
+      </div>
 
       <main className="relative z-10 mx-auto max-w-7xl px-6 py-10">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
