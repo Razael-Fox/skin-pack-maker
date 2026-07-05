@@ -6,6 +6,12 @@ interface SkinPreviewCanvasProps {
   geometry: GeometryType
 }
 
+interface ExtendedContext extends CanvasRenderingContext2D {
+  mozImageSmoothingEnabled?: boolean
+  webkitImageSmoothingEnabled?: boolean
+  msImageSmoothingEnabled?: boolean
+}
+
 interface Point3D {
   x: number
   y: number
@@ -549,6 +555,12 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
           const m21 = (pVert.x - pStart.x) / face.th
           const m22 = (pVert.y - pStart.y) / face.th
 
+          const eCtx = ctx as ExtendedContext
+          eCtx.imageSmoothingEnabled = false
+          eCtx.mozImageSmoothingEnabled = false
+          eCtx.webkitImageSmoothingEnabled = false
+          eCtx.msImageSmoothingEnabled = false
+
           ctx.setTransform(m11, m12, m21, m22, pStart.x, pStart.y)
           ctx.drawImage(
             img,
@@ -636,6 +648,7 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
         width={200}
         height={240}
         className="relative z-10 drop-shadow-[0_12px_15px_rgba(0,0,0,0.55)] select-none"
+        style={{ imageRendering: "pixelated" }}
       />
     </div>
   )

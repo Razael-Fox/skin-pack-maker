@@ -24,7 +24,9 @@ export function SkinList({
 
   return (
     <div className="rounded-xl border border-purple-500/10 bg-white/90 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        className={`flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ${skins.length > 0 ? "mb-5" : ""}`}
+      >
         <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
           <User className="h-4 w-4 text-zinc-400 dark:text-white/50" />
           <span>Skins ({skins.length})</span>
@@ -43,49 +45,51 @@ export function SkinList({
           </label>
         </div>
       </div>
-      <div className="custom-scrollbar max-h-[350px] space-y-2 overflow-y-auto pr-2">
-        {skins.map((skin) => (
-          <div
-            key={skin.id}
-            onClick={() => onSelectSkin(skin.id)}
-            className={`group/skin flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all duration-200 ${
-              selectedSkinId === skin.id
-                ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
-                : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
-            }`}
-          >
-            <div className="flex min-w-0 items-center gap-3">
-              <div
-                className={`h-2.5 w-2.5 rounded-full shadow-inner ${
-                  skin.textureFile
-                    ? "bg-purple-500"
-                    : "bg-zinc-300 dark:bg-white/20"
-                }`}
-              />
-              <span className="truncate text-sm font-medium text-zinc-800 dark:text-white/90">
-                {skin.name}
-              </span>
+      {skins.length > 0 && (
+        <div className="custom-scrollbar max-h-[350px] space-y-2 overflow-y-auto pr-2">
+          {skins.map((skin) => (
+            <div
+              key={skin.id}
+              onClick={() => onSelectSkin(skin.id)}
+              className={`group/skin flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all duration-200 ${
+                selectedSkinId === skin.id
+                  ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
+                  : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
+              }`}
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className={`h-2.5 w-2.5 rounded-full shadow-inner ${
+                    skin.textureFile
+                      ? "bg-purple-500"
+                      : "bg-zinc-300 dark:bg-white/20"
+                  }`}
+                />
+                <span className="truncate text-sm font-medium text-zinc-800 dark:text-white/90">
+                  {skin.name}
+                </span>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <span
+                  className={`rounded px-1.5 py-0.5 text-[9px] font-bold tracking-wider ${
+                    skin.type === "paid"
+                      ? "border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300"
+                      : "border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
+                  }`}
+                >
+                  {skin.type.toUpperCase()}
+                </span>
+                <button
+                  onClick={(e) => onRemoveSkin(skin.id, e)}
+                  className="p-1 text-zinc-400 opacity-60 transition-all hover:text-red-500 hover:opacity-100 dark:text-white/50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
-              <span
-                className={`rounded px-1.5 py-0.5 text-[9px] font-bold tracking-wider ${
-                  skin.type === "paid"
-                    ? "border border-amber-500/30 bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300"
-                    : "border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
-                }`}
-              >
-                {skin.type.toUpperCase()}
-              </span>
-              <button
-                onClick={(e) => onRemoveSkin(skin.id, e)}
-                className="p-1 text-zinc-400 opacity-60 transition-all hover:text-red-500 hover:opacity-100 dark:text-white/50"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
