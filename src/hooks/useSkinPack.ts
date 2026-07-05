@@ -277,7 +277,7 @@ export function useSkinPack() {
     const unnamedSkin = skins.find((s) => !s.name.trim())
     if (unnamedSkin) {
       setSelectedSkinId(unnamedSkin.id)
-      showToast("Please fill in the skin display name in English.", "error")
+      showToast("Please enter a display name for all skins.", "error")
       setExportMessage("Export cancelled: unnamed skins found.")
 
       setTimeout(() => {
