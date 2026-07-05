@@ -16,14 +16,91 @@ function generateUUID(): string {
   })
 }
 
+function dataURLtoFile(dataurl: string, filename: string): File {
+  const arr = dataurl.split(",")
+  const mimeMatch = arr[0].match(/:(.*?);/)
+  const mime = mimeMatch ? mimeMatch[1] : "image/png"
+  const bstr = atob(arr[1])
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+  return new File([u8arr], filename, { type: mime })
+}
+
+interface SavedSkin {
+  id: string
+  name: string
+  geometry: GeometryType
+  type: "free" | "paid"
+  textureName: string
+  textureUrl: string
+}
+
 export function useSkinPack() {
-  const [packName, setPackName] = useState("My Custom Skin Pack")
-  const [packVersion, setPackVersion] = useState("1.0.0")
+  const [packName, setPackName] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("skin_pack_name") || "My Custom Skin Pack"
+    }
+    return "My Custom Skin Pack"
+  })
+  const [packVersion, setPackVersion] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("skin_pack_version") || "1.0.0"
+    }
+    return "1.0.0"
+  })
   const [uuidHeader] = useState(() => generateUUID())
   const [uuidModule] = useState(() => generateUUID())
 
-  const [skins, setSkins] = useState<SkinItem[]>(() => [])
-  const [selectedSkinId, setSelectedSkinId] = useState<string | null>(null)
+  const [skins, setSkins] = useState<SkinItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedSkinsStr = localStorage.getItem("skin_pack_skins")
+      if (savedSkinsStr) {
+        try {
+          const parsedSkins = JSON.parse(savedSkinsStr) as SavedSkin[]
+          return parsedSkins.map((s) => {
+            let file: File | null = null
+            if (s.textureUrl && s.textureUrl.startsWith("data:")) {
+              try {
+                file = dataURLtoFile(s.textureUrl, s.textureName)
+              } catch (err) {
+                console.error("Failed to reconstruct file from data url", err)
+              }
+            }
+            return {
+              id: s.id,
+              name: s.name,
+              geometry: s.geometry,
+              type: s.type,
+              textureName: s.textureName,
+              textureFile: file,
+              textureUrl: s.textureUrl,
+            }
+          })
+        } catch (err) {
+          console.error("Failed to parse saved skins", err)
+        }
+      }
+    }
+    return []
+  })
+
+  const [selectedSkinId, setSelectedSkinId] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const savedSkinsStr = localStorage.getItem("skin_pack_skins")
+      if (savedSkinsStr) {
+        try {
+          const parsedSkins = JSON.parse(savedSkinsStr) as SavedSkin[]
+          if (parsedSkins.length > 0) {
+            return parsedSkins[0].id
+          }
+        } catch {}
+      }
+    }
+    return null
+  })
 
   const [exporting, setExporting] = useState(false)
   const [exportMessage, setExportMessage] = useState("")
@@ -31,6 +108,24 @@ export function useSkinPack() {
     blob: Blob
     filename: string
   } | null>(null)
+
+  // 2. Save state to localStorage on changes
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    localStorage.setItem("skin_pack_name", packName)
+    localStorage.setItem("skin_pack_version", packVersion)
+
+    const skinsToSave = skins.map((s) => ({
+      id: s.id,
+      name: s.name,
+      geometry: s.geometry,
+      type: s.type,
+      textureName: s.textureName,
+      textureUrl: s.textureUrl,
+    }))
+    localStorage.setItem("skin_pack_skins", JSON.stringify(skinsToSave))
+  }, [packName, packVersion, skins])
 
   const addNewSkin = (file: File) => {
     const id = Math.random().toString(36).slice(2, 11)
@@ -40,40 +135,45 @@ export function useSkinPack() {
       alert("Please upload a PNG image file!")
       return
     }
-    const url = URL.createObjectURL(file)
-    const img = new Image()
-    img.src = url
-    img.onload = () => {
-      let detectedGeometry: GeometryType = "geometry.humanoid.custom"
-      try {
-        const tempCanvas = document.createElement("canvas")
-        const ctx = tempCanvas.getContext("2d")
-        if (ctx) {
-          tempCanvas.width = img.naturalWidth
-          tempCanvas.height = img.naturalHeight
-          ctx.drawImage(img, 0, 0)
 
-          // Check pixel opacity at typical Alex arm location (40, 20)
-          const pixel = ctx.getImageData(40, 20, 1, 1).data
-          if (pixel[3] === 0) {
-            detectedGeometry = "geometry.humanoid.customSlim"
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      const img = new Image()
+      img.src = dataUrl
+      img.onload = () => {
+        let detectedGeometry: GeometryType = "geometry.humanoid.custom"
+        try {
+          const tempCanvas = document.createElement("canvas")
+          const ctx = tempCanvas.getContext("2d")
+          if (ctx) {
+            tempCanvas.width = img.naturalWidth
+            tempCanvas.height = img.naturalHeight
+            ctx.drawImage(img, 0, 0)
+
+            // Check pixel opacity at typical Alex arm location (40, 20)
+            const pixel = ctx.getImageData(40, 20, 1, 1).data
+            if (pixel[3] === 0) {
+              detectedGeometry = "geometry.humanoid.customSlim"
+            }
           }
+        } catch (e) {
+          console.warn("Could not auto-detect skin geometry", e)
         }
-      } catch (e) {
-        console.warn("Could not auto-detect skin geometry", e)
-      }
 
-      const newSkin: SkinItem = {
-        id,
-        name: `Skin ${count}`,
-        geometry: detectedGeometry,
-        type: "free",
-        textureUrl: url,
-        textureFile: file,
-        textureName: `skin_${id}.png`,
+        const newSkin: SkinItem = {
+          id,
+          name: `Skin ${count}`,
+          geometry: detectedGeometry,
+          type: "free",
+          textureUrl: dataUrl,
+          textureFile: file,
+          textureName: `skin_${id}.png`,
+        }
+        setSkins((prev) => [...prev, newSkin])
+        setSelectedSkinId(id)
       }
-      setSkins((prev) => [...prev, newSkin])
-      setSelectedSkinId(id)
     }
   }
 
@@ -81,7 +181,11 @@ export function useSkinPack() {
     e.stopPropagation()
     setSkins((prev) => {
       const target = prev.find((s) => s.id === id)
-      if (target && target.textureUrl) {
+      if (
+        target &&
+        target.textureUrl &&
+        !target.textureUrl.startsWith("data:")
+      ) {
         URL.revokeObjectURL(target.textureUrl)
       }
       return prev.filter((s) => s.id !== id)
@@ -103,41 +207,47 @@ export function useSkinPack() {
       return
     }
 
-    const url = URL.createObjectURL(file)
-    const img = new Image()
-    img.src = url
-    img.onload = () => {
-      let detectedGeometry: GeometryType = "geometry.humanoid.custom"
-      try {
-        const tempCanvas = document.createElement("canvas")
-        const ctx = tempCanvas.getContext("2d")
-        if (ctx) {
-          tempCanvas.width = img.naturalWidth
-          tempCanvas.height = img.naturalHeight
-          ctx.drawImage(img, 0, 0)
-          const pixel = ctx.getImageData(40, 20, 1, 1).data
-          if (pixel[3] === 0) {
-            detectedGeometry = "geometry.humanoid.customSlim"
-          }
-        }
-      } catch (e) {
-        console.warn("Could not auto-detect skin geometry", e)
-      }
-
-      setSkins((prev) =>
-        prev.map((s) => {
-          if (s.id === id) {
-            if (s.textureUrl) URL.revokeObjectURL(s.textureUrl)
-            return {
-              ...s,
-              textureUrl: url,
-              textureFile: file,
-              geometry: detectedGeometry,
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      const dataUrl = reader.result as string
+      const img = new Image()
+      img.src = dataUrl
+      img.onload = () => {
+        let detectedGeometry: GeometryType = "geometry.humanoid.custom"
+        try {
+          const tempCanvas = document.createElement("canvas")
+          const ctx = tempCanvas.getContext("2d")
+          if (ctx) {
+            tempCanvas.width = img.naturalWidth
+            tempCanvas.height = img.naturalHeight
+            ctx.drawImage(img, 0, 0)
+            const pixel = ctx.getImageData(40, 20, 1, 1).data
+            if (pixel[3] === 0) {
+              detectedGeometry = "geometry.humanoid.customSlim"
             }
           }
-          return s
-        })
-      )
+        } catch (e) {
+          console.warn("Could not auto-detect skin geometry", e)
+        }
+
+        setSkins((prev) =>
+          prev.map((s) => {
+            if (s.id === id) {
+              if (s.textureUrl && !s.textureUrl.startsWith("data:")) {
+                URL.revokeObjectURL(s.textureUrl)
+              }
+              return {
+                ...s,
+                textureUrl: dataUrl,
+                textureFile: file,
+                geometry: detectedGeometry,
+              }
+            }
+            return s
+          })
+        )
+      }
     }
   }
 
@@ -232,7 +342,9 @@ export function useSkinPack() {
   useEffect(() => {
     return () => {
       skins.forEach((skin) => {
-        if (skin.textureUrl) URL.revokeObjectURL(skin.textureUrl)
+        if (skin.textureUrl && !skin.textureUrl.startsWith("data:")) {
+          URL.revokeObjectURL(skin.textureUrl)
+        }
       })
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
