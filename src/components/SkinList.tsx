@@ -23,7 +23,7 @@ export function SkinList({
   }
 
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white/60 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-zinc-300 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-white/20">
+    <div className="rounded-xl border border-purple-500/10 bg-white/90 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
           <User className="h-4 w-4 text-zinc-400 dark:text-white/50" />
@@ -51,7 +51,7 @@ export function SkinList({
             className={`group/skin flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all duration-200 ${
               selectedSkinId === skin.id
                 ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
-                : "border-zinc-100 bg-zinc-50 hover:border-zinc-200 hover:bg-zinc-100 dark:border-white/5 dark:bg-white/5 dark:hover:border-white/20 dark:hover:bg-white/10"
+                : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
             }`}
           >
             <div className="flex min-w-0 items-center gap-3">

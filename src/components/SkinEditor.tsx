@@ -23,7 +23,7 @@ export function SkinEditor({
   }
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-zinc-200 bg-white/60 p-8 shadow-md backdrop-blur-md transition-all duration-300 md:col-span-7 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20">
+    <div className="flex flex-col justify-between rounded-xl border border-purple-500/10 bg-white/90 p-8 shadow-md backdrop-blur-md transition-all duration-300 md:col-span-7 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20">
       <div className="space-y-6">
         <div className="border-b border-zinc-200 pb-4 dark:border-white/10">
           <h3 className="text-sm font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
@@ -47,7 +47,7 @@ export function SkinEditor({
                 onUpdateSkin(skin.id, { name: localSkinName.trim() })
               }
             }}
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-100/50 px-4 py-3 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/10 dark:bg-black/20 dark:text-white"
+            className="w-full rounded-lg border border-zinc-300 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/15 dark:bg-black/40 dark:text-white"
           />
         </div>
 
@@ -64,7 +64,7 @@ export function SkinEditor({
               className={`cursor-pointer rounded-xl border p-4 text-left transition-all duration-200 ${
                 skin.geometry === "geometry.humanoid.custom"
                   ? "border-purple-500/50 bg-purple-500/10 text-purple-700 shadow-[0_0_15px_rgba(139,92,246,0.15)] dark:text-white"
-                  : "border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/30 dark:hover:bg-white/10"
+                  : "border-zinc-300 bg-zinc-50 text-zinc-500 hover:border-purple-500/20 hover:bg-zinc-100/50 dark:border-white/15 dark:bg-black/20 dark:text-white/60 dark:hover:border-purple-500/30 dark:hover:bg-white/5"
               }`}
             >
               <p className="text-xs font-bold tracking-wider uppercase">
@@ -84,7 +84,7 @@ export function SkinEditor({
               className={`cursor-pointer rounded-xl border p-4 text-left transition-all duration-200 ${
                 skin.geometry === "geometry.humanoid.customSlim"
                   ? "border-purple-500/50 bg-purple-500/10 text-purple-700 shadow-[0_0_15px_rgba(139,92,246,0.15)] dark:text-white"
-                  : "border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/30 dark:hover:bg-white/10"
+                  : "border-zinc-300 bg-zinc-50 text-zinc-500 hover:border-purple-500/20 hover:bg-zinc-100/50 dark:border-white/15 dark:bg-black/20 dark:text-white/60 dark:hover:border-purple-500/30 dark:hover:bg-white/5"
               }`}
             >
               <p className="text-xs font-bold tracking-wider uppercase">
@@ -108,7 +108,7 @@ export function SkinEditor({
               className={`cursor-pointer rounded-xl border p-3 text-center text-xs font-bold tracking-wider uppercase transition-all duration-200 ${
                 skin.type === "free"
                   ? "border-purple-500/50 bg-purple-500/10 text-purple-700 shadow-[0_0_15px_rgba(139,92,246,0.2)] dark:bg-purple-500/20 dark:text-purple-300"
-                  : "border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:border-white/30 dark:hover:bg-white/10"
+                  : "border-zinc-300 bg-zinc-50 text-zinc-500 hover:border-purple-500/20 hover:bg-zinc-100/50 dark:border-white/15 dark:bg-black/20 dark:text-white/60 dark:hover:border-purple-500/30 dark:hover:bg-white/5"
               }`}
             >
               FREE (EMERALD)
@@ -119,7 +119,7 @@ export function SkinEditor({
               className={`cursor-pointer rounded-xl border p-3 text-center text-xs font-bold tracking-wider uppercase transition-all duration-200 ${
                 skin.type === "paid"
                   ? "border-amber-500/50 bg-amber-500/10 text-amber-600 shadow-[0_0_15px_rgba(245,158,11,0.2)] dark:bg-amber-500/20 dark:text-amber-300"
-                  : "border-zinc-200 bg-zinc-50 text-zinc-500 hover:border-amber-500/30 hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/60 dark:hover:bg-white/10"
+                  : "border-zinc-300 bg-zinc-50 text-zinc-500 hover:border-amber-500/30 hover:bg-zinc-100/50 dark:border-white/15 dark:bg-black/20 dark:text-white/60 dark:hover:border-amber-500/30 dark:hover:bg-white/5"
               }`}
             >
               PAID (GOLD)

@@ -30,10 +30,17 @@ export default function SkinPackMaker() {
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
   const currentSkin = skins.find((s) => s.id === selectedSkinId)
 
+  React.useEffect(() => {
+    const root = window.document.documentElement
+    if (theme === "dark") {
+      root.classList.add("dark")
+    } else {
+      root.classList.remove("dark")
+    }
+  }, [theme])
+
   return (
-    <div
-      className={`relative min-h-screen w-full overflow-x-hidden bg-slate-50/70 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-[#0a0a0a]/85 dark:text-white ${theme}`}
-    >
+    <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white">
       {/* Background ambient glows */}
       <div className="pointer-events-none absolute top-[-20%] left-[-10%] h-[800px] w-[800px] rounded-full bg-purple-600/5 blur-[120px] dark:bg-purple-900/10" />
       <div className="pointer-events-none absolute right-[-10%] bottom-[-20%] h-[600px] w-[600px] rounded-full bg-indigo-600/5 blur-[120px] dark:bg-indigo-900/10" />
@@ -60,7 +67,7 @@ export default function SkinPackMaker() {
             />
 
             {/* Export Card */}
-            <div className="mt-auto rounded-xl border border-zinc-200 bg-white/60 p-6 text-center shadow-md backdrop-blur-md transition-all duration-300 hover:border-zinc-300 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-white/20">
+            <div className="mt-auto rounded-xl border border-purple-500/10 bg-white/90 p-6 text-center shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
               <button
                 onClick={handleExport}
                 disabled={exporting || skins.length === 0}
@@ -81,7 +88,7 @@ export default function SkinPackMaker() {
             {currentSkin ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
                 {/* 3D Projection view */}
-                <div className="flex flex-col items-center justify-between rounded-xl border border-zinc-200 bg-white/60 p-8 shadow-md backdrop-blur-md transition-all duration-300 hover:border-zinc-300 md:col-span-5 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-white/20">
+                <div className="flex flex-col items-center justify-between rounded-xl border border-purple-500/10 bg-white/90 p-8 shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 md:col-span-5 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
                   <div className="mb-6 flex w-full items-center justify-between border-b border-zinc-200 pb-4 dark:border-white/10">
                     <h3 className="text-xs font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
                       Skin Projection
@@ -116,7 +123,7 @@ export default function SkinPackMaker() {
                 />
               </div>
             ) : (
-              <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-zinc-200 bg-white/60 text-center shadow-md transition-all duration-300 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20">
+              <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-purple-500/20 bg-white/90 text-center shadow-md transition-all duration-300 dark:border-purple-500/30 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20">
                 <HelpCircle className="mb-4 h-12 w-12 text-zinc-300 dark:text-white/30" />
                 <p className="text-sm font-semibold tracking-widest text-zinc-500 uppercase dark:text-white/70">
                   NO SKIN SELECTED

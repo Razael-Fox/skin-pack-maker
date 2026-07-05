@@ -35,7 +35,7 @@ export function PackSettings({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-white/60 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-zinc-300 dark:border-white/10 dark:bg-white/5 dark:shadow-xl dark:shadow-black/20 dark:hover:border-white/20">
+    <div className="relative overflow-hidden rounded-xl border border-purple-500/10 bg-white/90 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
       <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500/50 to-indigo-500/50" />
       <div className="mb-5 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-900 uppercase dark:text-white/90">
@@ -66,7 +66,7 @@ export function PackSettings({
             value={localName}
             onChange={(e) => setLocalName(e.target.value)}
             onBlur={() => onNameChange(localName)}
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-100/50 px-3 py-2 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/10 dark:bg-black/20 dark:text-white"
+            className="w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/15 dark:bg-black/40 dark:text-white"
             placeholder="Enter pack name..."
           />
         </div>
@@ -79,7 +79,7 @@ export function PackSettings({
             value={localVersion}
             onChange={(e) => setLocalVersion(e.target.value)}
             onBlur={() => onVersionChange(localVersion)}
-            className="w-full rounded-lg border border-zinc-200 bg-zinc-100/50 px-3 py-2 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/10 dark:bg-black/20 dark:text-white"
+            className="w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/15 dark:bg-black/40 dark:text-white"
             placeholder="1.0.0"
           />
         </div>
