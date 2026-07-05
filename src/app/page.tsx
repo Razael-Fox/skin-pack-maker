@@ -64,6 +64,11 @@ export default function SkinPackMaker() {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white">
+      {/* Hardware-accelerated fixed background image */}
+      <div
+        className="pointer-events-none fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/bg.jpg')" }}
+      />
       {/* Background ambient glows */}
       <div className="pointer-events-none absolute top-[-20%] left-[-10%] h-[800px] w-[800px] rounded-full bg-purple-600/5 blur-[120px] dark:bg-purple-900/10" />
       <div className="pointer-events-none absolute right-[-10%] bottom-[-20%] h-[600px] w-[600px] rounded-full bg-indigo-600/5 blur-[120px] dark:bg-indigo-900/10" />
