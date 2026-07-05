@@ -27,6 +27,10 @@ export function useSkinPack() {
 
   const [exporting, setExporting] = useState(false)
   const [exportMessage, setExportMessage] = useState("")
+  const [pendingDownload, setPendingDownload] = useState<{
+    blob: Blob
+    filename: string
+  } | null>(null)
 
   const addNewSkin = (file: File) => {
     const id = Math.random().toString(36).slice(2, 11)
@@ -43,51 +47,47 @@ export function useSkinPack() {
       let detectedGeometry: GeometryType = "geometry.humanoid.custom"
       try {
         const tempCanvas = document.createElement("canvas")
-        tempCanvas.width = img.naturalWidth
-        tempCanvas.height = img.naturalHeight
-        const tempCtx = tempCanvas.getContext("2d")
-        if (tempCtx) {
-          tempCtx.drawImage(img, 0, 0)
-          const imgData = tempCtx.getImageData(47, 20, 1, 12)
-          let hasSolidPixel = false
-          for (let i = 3; i < imgData.data.length; i += 4) {
-            if (imgData.data[i] > 0) {
-              hasSolidPixel = true
-              break
-            }
-          }
-          if (!hasSolidPixel && img.naturalHeight === 64) {
+        const ctx = tempCanvas.getContext("2d")
+        if (ctx) {
+          tempCanvas.width = img.naturalWidth
+          tempCanvas.height = img.naturalHeight
+          ctx.drawImage(img, 0, 0)
+
+          // Check pixel opacity at typical Alex arm location (40, 20)
+          const pixel = ctx.getImageData(40, 20, 1, 1).data
+          if (pixel[3] === 0) {
             detectedGeometry = "geometry.humanoid.customSlim"
           }
         }
       } catch (e) {
-        console.warn("Could not auto-detect geometry:", e)
+        console.warn("Could not auto-detect skin geometry", e)
       }
 
       const newSkin: SkinItem = {
         id,
-        name: file.name.replace(/\.[^/.]+$/, "") || `Skin ${count}`,
+        name: `Skin ${count}`,
         geometry: detectedGeometry,
         type: "free",
-        textureName: `skin_${id}.png`,
-        textureFile: file,
         textureUrl: url,
+        textureFile: file,
+        textureName: `skin_${id}.png`,
       }
       setSkins((prev) => [...prev, newSkin])
       setSelectedSkinId(id)
     }
   }
 
-  const removeSkin = (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation()
-    const skinToRemove = skins.find((s) => s.id === id)
-    if (skinToRemove?.textureUrl) {
-      URL.revokeObjectURL(skinToRemove.textureUrl)
-    }
-    const updatedSkins = skins.filter((s) => s.id !== id)
-    setSkins(updatedSkins)
+  const removeSkin = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSkins((prev) => {
+      const target = prev.find((s) => s.id === id)
+      if (target && target.textureUrl) {
+        URL.revokeObjectURL(target.textureUrl)
+      }
+      return prev.filter((s) => s.id !== id)
+    })
     if (selectedSkinId === id) {
-      setSelectedSkinId(updatedSkins.length > 0 ? updatedSkins[0].id : null)
+      setSelectedSkinId(null)
     }
   }
 
@@ -103,11 +103,6 @@ export function useSkinPack() {
       return
     }
 
-    const existingSkin = skins.find((s) => s.id === id)
-    if (existingSkin?.textureUrl) {
-      URL.revokeObjectURL(existingSkin.textureUrl)
-    }
-
     const url = URL.createObjectURL(file)
     const img = new Image()
     img.src = url
@@ -115,58 +110,48 @@ export function useSkinPack() {
       let detectedGeometry: GeometryType = "geometry.humanoid.custom"
       try {
         const tempCanvas = document.createElement("canvas")
-        tempCanvas.width = img.naturalWidth
-        tempCanvas.height = img.naturalHeight
-        const tempCtx = tempCanvas.getContext("2d")
-        if (tempCtx) {
-          tempCtx.drawImage(img, 0, 0)
-          const imgData = tempCtx.getImageData(47, 20, 1, 12)
-          let hasSolidPixel = false
-          for (let i = 3; i < imgData.data.length; i += 4) {
-            if (imgData.data[i] > 0) {
-              hasSolidPixel = true
-              break
-            }
-          }
-          if (!hasSolidPixel && img.naturalHeight === 64) {
+        const ctx = tempCanvas.getContext("2d")
+        if (ctx) {
+          tempCanvas.width = img.naturalWidth
+          tempCanvas.height = img.naturalHeight
+          ctx.drawImage(img, 0, 0)
+          const pixel = ctx.getImageData(40, 20, 1, 1).data
+          if (pixel[3] === 0) {
             detectedGeometry = "geometry.humanoid.customSlim"
           }
         }
       } catch (e) {
-        console.warn("Could not auto-detect geometry model:", e)
+        console.warn("Could not auto-detect skin geometry", e)
       }
 
-      updateSkin(id, {
-        textureFile: file,
-        textureUrl: url,
-        textureName: `skin_${id}.png`,
-        geometry: detectedGeometry,
-      })
+      setSkins((prev) =>
+        prev.map((s) => {
+          if (s.id === id) {
+            if (s.textureUrl) URL.revokeObjectURL(s.textureUrl)
+            return {
+              ...s,
+              textureUrl: url,
+              textureFile: file,
+              geometry: detectedGeometry,
+            }
+          }
+          return s
+        })
+      )
     }
   }
 
   const handleExport = async () => {
-    if (skins.length === 0) {
-      setExportMessage("Add at least one skin to export.")
-      return
-    }
-
-    const unassignedSkins = skins.filter((s) => !s.textureFile)
-    if (unassignedSkins.length > 0) {
-      setExportMessage(
-        `Warning: Skin "${unassignedSkins[0].name}" is missing a PNG texture.`
-      )
-      setSelectedSkinId(unassignedSkins[0].id)
-      return
-    }
+    if (skins.length === 0) return
+    setExporting(true)
+    setExportMessage("Generating pack zip structure...")
 
     try {
-      setExporting(true)
-      setExportMessage("Generating pack structure...")
-
-      const JSZip = (await import("jszip")).default
+      // Dynamic import JSZip to optimize bundle
+      const { default: JSZip } = await import("jszip")
       const zip = new JSZip()
-      const slugName = packName.replace(/[^a-zA-Z0-9]/g, "") || "CustomSkinPack"
+      const slugName = packName.toLowerCase().replace(/[^a-z0-9]+/g, "_")
+
       const versionArr = packVersion
         .split(".")
         .map((num) => parseInt(num, 10) || 0)
@@ -210,15 +195,10 @@ export function useSkinPack() {
       }
 
       const blob = await zip.generateAsync({ type: "blob" })
-      const link = document.createElement("a")
-      link.href = URL.createObjectURL(blob)
-      link.download = `${packName.toLowerCase().replace(/[^a-z0-9]+/g, "_")}.mcpack`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const filename = `${packName.toLowerCase().replace(/[^a-z0-9]+/g, "_")}.mcpack`
 
-      setExportMessage("Success! Download started.")
-      setTimeout(() => setExportMessage(""), 8000)
+      setPendingDownload({ blob, filename })
+      setExportMessage("Generated! Confirm download.")
     } catch (err: unknown) {
       setExportMessage(
         `Export failed: ${err instanceof Error ? err.message : String(err)}`
@@ -226,6 +206,26 @@ export function useSkinPack() {
     } finally {
       setExporting(false)
     }
+  }
+
+  const confirmDownload = () => {
+    if (!pendingDownload) return
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(pendingDownload.blob)
+    link.download = pendingDownload.filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(link.href)
+    setPendingDownload(null)
+    setExportMessage("Success! Download started.")
+    setTimeout(() => setExportMessage(""), 5000)
+  }
+
+  const cancelDownload = () => {
+    setPendingDownload(null)
+    setExportMessage("Download cancelled.")
+    setTimeout(() => setExportMessage(""), 4000)
   }
 
   // Cleanup on unmount
@@ -252,5 +252,8 @@ export function useSkinPack() {
     updateSkin,
     handleTextureUpload,
     handleExport,
+    pendingDownload,
+    confirmDownload,
+    cancelDownload,
   }
 }

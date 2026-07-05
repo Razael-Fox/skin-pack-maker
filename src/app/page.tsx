@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { HelpCircle } from "lucide-react"
+import { HelpCircle, Download } from "lucide-react"
 
 import { useSkinPack } from "../hooks/useSkinPack"
 import { PackSettings } from "../components/PackSettings"
@@ -25,6 +25,9 @@ export default function SkinPackMaker() {
     updateSkin,
     handleTextureUpload,
     handleExport,
+    pendingDownload,
+    confirmDownload,
+    cancelDownload,
   } = useSkinPack()
 
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
@@ -137,6 +140,71 @@ export default function SkinPackMaker() {
           </section>
         </div>
       </main>
+
+      {/* Confirmation Download Modal */}
+      {pendingDownload && (
+        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm duration-200">
+          <div className="animate-in zoom-in-95 w-full max-w-md rounded-xl border border-purple-500/20 bg-white/95 p-6 text-zinc-900 shadow-2xl duration-200 dark:bg-zinc-900/95 dark:text-white">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <Download className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold tracking-wider uppercase">
+                  Confirm Download
+                </h4>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                  Verify pack details before exporting
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-6 space-y-2.5 rounded-lg border border-zinc-200 bg-zinc-50/50 p-4 font-sans text-xs dark:border-white/5 dark:bg-black/20">
+              <div className="flex justify-between">
+                <span className="font-medium text-zinc-500 dark:text-zinc-400">
+                  Pack Name:
+                </span>
+                <span className="font-semibold">{packName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-zinc-500 dark:text-zinc-400">
+                  Version:
+                </span>
+                <span className="font-mono font-semibold">{packVersion}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-zinc-500 dark:text-zinc-400">
+                  Total Skins:
+                </span>
+                <span className="font-semibold">{skins.length} skins</span>
+              </div>
+              <div className="mt-2 flex justify-between border-t border-zinc-200 pt-2 dark:border-white/5">
+                <span className="font-medium text-zinc-500 dark:text-zinc-400">
+                  File Size:
+                </span>
+                <span className="font-bold text-purple-600 dark:text-purple-400">
+                  {(pendingDownload.blob.size / 1024).toFixed(1)} KB
+                </span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={cancelDownload}
+                className="flex-1 cursor-pointer rounded-lg border border-zinc-300 bg-zinc-100 py-2.5 text-xs font-bold tracking-wider text-zinc-700 uppercase transition-all hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDownload}
+                className="flex-1 cursor-pointer rounded-lg bg-purple-600 py-2.5 text-xs font-bold tracking-wider text-white uppercase shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700"
+              >
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
