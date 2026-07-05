@@ -108,10 +108,14 @@ export default function SkinPackMaker() {
                       geometry={currentSkin.geometry}
                     />
                   </div>
-                  <div className="mt-6 space-y-1.5 text-center">
+                  <div className="mt-6 space-y-2.5 text-center">
                     <p className="text-sm font-semibold tracking-wide text-zinc-900 dark:text-white">
                       {currentSkin.name}
                     </p>
+                    <div className="mx-auto max-w-[220px] rounded border border-amber-500/20 bg-amber-500/5 p-2 text-[9px] text-amber-600 dark:bg-amber-500/10 dark:text-amber-400">
+                      ⚠️ Note: 3D preview is unstable and may have rendering
+                      defects.
+                    </div>
                     <p className="mx-auto max-w-[200px] text-[10px] leading-relaxed text-zinc-500 dark:text-white/50">
                       Drag to rotate. Real-time 3D projection showing base skin
                       and outer clothing layers.
