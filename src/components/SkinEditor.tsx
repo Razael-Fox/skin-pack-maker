@@ -39,13 +39,13 @@ export function SkinEditor({
             Skin Display Name
           </label>
           <input
+            id={`skin-name-${skin.id}`}
             type="text"
             value={localSkinName}
-            onChange={(e) => setLocalSkinName(e.target.value)}
-            onBlur={() => {
-              if (localSkinName.trim()) {
-                onUpdateSkin(skin.id, { name: localSkinName.trim() })
-              }
+            placeholder={skin.placeholderName}
+            onChange={(e) => {
+              setLocalSkinName(e.target.value)
+              onUpdateSkin(skin.id, { name: e.target.value })
             }}
             className="w-full rounded-lg border border-zinc-300 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 shadow-inner transition-all outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 dark:border-white/15 dark:bg-black/40 dark:text-white"
           />

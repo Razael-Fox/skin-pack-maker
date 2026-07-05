@@ -65,8 +65,14 @@ export function SkinList({
                       : "bg-zinc-300 dark:bg-white/20"
                   }`}
                 />
-                <span className="truncate text-sm font-medium text-zinc-800 dark:text-white/90">
-                  {skin.name}
+                <span
+                  className={`truncate text-sm font-medium ${
+                    skin.name
+                      ? "text-zinc-800 dark:text-white/90"
+                      : "text-zinc-400 italic dark:text-white/40"
+                  }`}
+                >
+                  {skin.name || `${skin.placeholderName} (Unnamed)`}
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-2">

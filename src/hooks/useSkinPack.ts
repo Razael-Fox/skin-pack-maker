@@ -32,6 +32,7 @@ function dataURLtoFile(dataurl: string, filename: string): File {
 interface SavedSkin {
   id: string
   name: string
+  placeholderName: string
   geometry: GeometryType
   type: "free" | "paid"
   textureName: string
@@ -60,7 +61,7 @@ export function useSkinPack() {
       if (savedSkinsStr) {
         try {
           const parsedSkins = JSON.parse(savedSkinsStr) as SavedSkin[]
-          return parsedSkins.map((s) => {
+          return parsedSkins.map((s, index) => {
             let file: File | null = null
             if (s.textureUrl && s.textureUrl.startsWith("data:")) {
               try {
@@ -71,7 +72,8 @@ export function useSkinPack() {
             }
             return {
               id: s.id,
-              name: s.name,
+              name: s.name || "",
+              placeholderName: s.placeholderName || `Skin ${index + 1}`,
               geometry: s.geometry,
               type: s.type,
               textureName: s.textureName,
@@ -109,7 +111,22 @@ export function useSkinPack() {
     filename: string
   } | null>(null)
 
-  // 2. Save state to localStorage on changes
+  const [toast, setToast] = useState<{
+    message: string
+    type: "success" | "error" | "info"
+  } | null>(null)
+
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "info" = "info"
+  ) => {
+    setToast({ message, type })
+    setTimeout(() => {
+      setToast((prev) => (prev?.message === message ? null : prev))
+    }, 4500)
+  }
+
+  // Save state to localStorage on changes
   useEffect(() => {
     if (typeof window === "undefined") return
 
@@ -119,6 +136,7 @@ export function useSkinPack() {
     const skinsToSave = skins.map((s) => ({
       id: s.id,
       name: s.name,
+      placeholderName: s.placeholderName,
       geometry: s.geometry,
       type: s.type,
       textureName: s.textureName,
@@ -164,7 +182,8 @@ export function useSkinPack() {
 
         const newSkin: SkinItem = {
           id,
-          name: `Skin ${count}`,
+          name: "",
+          placeholderName: `Skin ${count}`,
           geometry: detectedGeometry,
           type: "free",
           textureUrl: dataUrl,
@@ -253,6 +272,28 @@ export function useSkinPack() {
 
   const handleExport = async () => {
     if (skins.length === 0) return
+
+    // 1. Validation: check for empty skin display names
+    const unnamedSkin = skins.find((s) => !s.name.trim())
+    if (unnamedSkin) {
+      setSelectedSkinId(unnamedSkin.id)
+      showToast("Please fill in the skin display name in English.", "error")
+      setExportMessage("Export cancelled: unnamed skins found.")
+
+      setTimeout(() => {
+        const inputEl = document.getElementById(`skin-name-${unnamedSkin.id}`)
+        if (inputEl) {
+          inputEl.scrollIntoView({ behavior: "smooth", block: "center" })
+          inputEl.focus()
+          inputEl.classList.add("ring-2", "ring-red-500", "animate-pulse")
+          setTimeout(() => {
+            inputEl.classList.remove("ring-2", "ring-red-500", "animate-pulse")
+          }, 3000)
+        }
+      }, 250)
+      return
+    }
+
     setExporting(true)
     setExportMessage("Generating pack zip structure...")
 
@@ -329,12 +370,14 @@ export function useSkinPack() {
     URL.revokeObjectURL(link.href)
     setPendingDownload(null)
     setExportMessage("Success! Download started.")
+    showToast("Download started successfully!", "success")
     setTimeout(() => setExportMessage(""), 5000)
   }
 
   const cancelDownload = () => {
     setPendingDownload(null)
     setExportMessage("Download cancelled.")
+    showToast("Download cancelled.", "info")
     setTimeout(() => setExportMessage(""), 4000)
   }
 
@@ -367,5 +410,7 @@ export function useSkinPack() {
     pendingDownload,
     confirmDownload,
     cancelDownload,
+    toast,
+    showToast,
   }
 }

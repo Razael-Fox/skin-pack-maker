@@ -6,6 +6,7 @@ export type SkinType = "free" | "paid"
 export interface SkinItem {
   id: string
   name: string
+  placeholderName: string
   geometry: GeometryType
   type: SkinType
   textureName: string
