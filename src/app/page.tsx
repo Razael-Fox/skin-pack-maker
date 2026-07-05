@@ -32,7 +32,13 @@ export default function SkinPackMaker() {
   } = useSkinPack()
 
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
+  const [mounted, setMounted] = React.useState(false)
   const currentSkin = skins.find((s) => s.id === selectedSkinId)
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
+  }, [])
 
   React.useEffect(() => {
     const root = window.document.documentElement
@@ -42,6 +48,19 @@ export default function SkinPackMaker() {
       root.classList.remove("dark")
     }
   }, [theme])
+
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#0a0a0a] text-center font-sans antialiased">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
+          <p className="animate-pulse text-xs font-bold tracking-widest text-purple-400 uppercase">
+            Loading Workspace...
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white">
