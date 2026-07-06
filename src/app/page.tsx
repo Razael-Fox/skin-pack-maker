@@ -165,7 +165,7 @@ export default function SkinPackMaker() {
                   <p className="font-sans text-xs text-zinc-400 dark:text-white/50">
                     To get started, select a skin from the list or click:
                   </p>
-                  <label className="animate-guide-pulse flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg shadow-purple-600/20 transition-all duration-200 hover:bg-purple-700 active:scale-95">
+                  <label className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg shadow-purple-600/20 transition-all duration-200 hover:bg-purple-700 active:scale-95">
                     <Upload className="h-3.5 w-3.5" />
                     <span>ADD PNG</span>
                     <input
