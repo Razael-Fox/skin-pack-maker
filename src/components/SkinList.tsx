@@ -37,9 +37,7 @@ export function SkinList({
           <label
             id="real-add-png-btn"
             className={`flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700 ${
-              highlightAddButton
-                ? "animate-flash-border scale-105 border border-white"
-                : ""
+              highlightAddButton ? "animate-flash-border scale-105" : ""
             }`}
           >
             <Upload className="h-3.5 w-3.5" />
