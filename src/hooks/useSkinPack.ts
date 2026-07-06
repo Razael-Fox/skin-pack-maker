@@ -156,10 +156,7 @@ export function useSkinPack() {
 
     const now = Date.now()
     if (now - lastDeleteTimestamp.current < 3000) {
-      showToast(
-        "Please wait 3 seconds after deleting a skin before adding a new one.",
-        "info"
-      )
+      showToast("Wait 3s after deleting a skin.", "info")
       return
     }
 
