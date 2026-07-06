@@ -161,10 +161,18 @@ export default function SkinPackMaker() {
                 <p className="text-sm font-semibold tracking-widest text-zinc-500 uppercase dark:text-white/70">
                   NO SKIN SELECTED
                 </p>
-                <p className="mt-2 font-sans text-xs text-zinc-400 dark:text-white/40">
-                  Select a skin from the list or click ADD PNG to create a new
-                  one.
-                </p>
+                <div className="mt-3 flex flex-col items-center gap-2.5">
+                  <p className="font-sans text-xs text-zinc-400 dark:text-white/50">
+                    To get started, select a skin from the list or click:
+                  </p>
+                  <button
+                    type="button"
+                    className="flex animate-pulse cursor-default items-center gap-1.5 rounded-lg border border-[#00e676] bg-[#00e676]/10 px-4 py-2 text-[10px] font-bold tracking-widest text-[#00e676] uppercase shadow-[0_0_15px_rgba(0,230,118,0.25)] transition-all"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#00e676]" />
+                    ADD PNG
+                  </button>
+                </div>
               </div>
             )}
           </section>
