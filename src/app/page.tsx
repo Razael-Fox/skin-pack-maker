@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { HelpCircle, Download } from "lucide-react"
+import { HelpCircle, Download, Upload } from "lucide-react"
 
 import { useSkinPack } from "../hooks/useSkinPack"
 import { PackSettings } from "../components/PackSettings"
@@ -161,17 +161,27 @@ export default function SkinPackMaker() {
                 <p className="text-sm font-semibold tracking-widest text-zinc-500 uppercase dark:text-white/70">
                   NO SKIN SELECTED
                 </p>
-                <div className="mt-3 flex flex-col items-center gap-2.5">
+                <div className="mt-4 flex flex-col items-center gap-3">
                   <p className="font-sans text-xs text-zinc-400 dark:text-white/50">
                     To get started, select a skin from the list or click:
                   </p>
-                  <button
-                    type="button"
-                    className="flex animate-pulse cursor-default items-center gap-1.5 rounded-lg border border-[#00e676] bg-[#00e676]/10 px-4 py-2 text-[10px] font-bold tracking-widest text-[#00e676] uppercase shadow-[0_0_15px_rgba(0,230,118,0.25)] transition-all"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#00e676]" />
-                    ADD PNG
-                  </button>
+                  <label className="animate-guide-pulse flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg shadow-purple-600/20 transition-all duration-200 hover:bg-purple-700 active:scale-95">
+                    <Upload className="h-3.5 w-3.5" />
+                    <span>ADD PNG</span>
+                    <input
+                      type="file"
+                      accept="image/png"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          Array.from(e.target.files).forEach((file) =>
+                            addNewSkin(file)
+                          )
+                        }
+                      }}
+                    />
+                  </label>
                 </div>
               </div>
             )}
