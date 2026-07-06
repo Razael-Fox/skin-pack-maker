@@ -7,6 +7,7 @@ interface SkinListProps {
   onSelectSkin: (id: string) => void
   onAddSkin: (file: File) => void
   onRemoveSkin: (id: string, e: React.MouseEvent) => void
+  highlightAddButton?: boolean
 }
 
 export function SkinList({
@@ -15,6 +16,7 @@ export function SkinList({
   onSelectSkin,
   onAddSkin,
   onRemoveSkin,
+  highlightAddButton,
 }: SkinListProps) {
   const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -32,7 +34,14 @@ export function SkinList({
           <span>Skins ({skins.length})</span>
         </h2>
         <div className="flex gap-2">
-          <label className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700">
+          <label
+            id="real-add-png-btn"
+            className={`flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700 ${
+              highlightAddButton
+                ? "animate-flash-border scale-105 border border-white"
+                : ""
+            }`}
+          >
             <Upload className="h-3.5 w-3.5" />
             <span>ADD PNG</span>
             <input

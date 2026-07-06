@@ -36,6 +36,20 @@ export default function SkinPackMaker() {
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
   const [mounted, setMounted] = React.useState(false)
   const currentSkin = skins.find((s) => s.id === selectedSkinId)
+  const [highlightAddButton, setHighlightAddButton] = React.useState(false)
+
+  const triggerAddHighlight = () => {
+    setHighlightAddButton(true)
+    setTimeout(() => {
+      const realBtn = document.getElementById("real-add-png-btn")
+      if (realBtn) {
+        realBtn.scrollIntoView({ behavior: "smooth", block: "center" })
+      }
+    }, 100)
+    setTimeout(() => {
+      setHighlightAddButton(false)
+    }, 2500)
+  }
 
   React.useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0)
@@ -93,6 +107,7 @@ export default function SkinPackMaker() {
               onSelectSkin={setSelectedSkinId}
               onAddSkin={addNewSkin}
               onRemoveSkin={removeSkin}
+              highlightAddButton={highlightAddButton}
             />
 
             {/* Export Card */}
@@ -165,23 +180,14 @@ export default function SkinPackMaker() {
                   <p className="font-sans text-xs text-zinc-400 dark:text-white/50">
                     To get started, select a skin from the list or click:
                   </p>
-                  <label className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg shadow-purple-600/20 transition-all duration-200 hover:bg-purple-700 active:scale-95">
+                  <button
+                    type="button"
+                    onClick={triggerAddHighlight}
+                    className="flex cursor-pointer items-center justify-center gap-1 rounded-lg bg-purple-600 px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase shadow-lg shadow-purple-600/20 transition-all duration-200 hover:bg-purple-700 active:scale-95"
+                  >
                     <Upload className="h-3.5 w-3.5" />
                     <span>ADD PNG</span>
-                    <input
-                      type="file"
-                      accept="image/png"
-                      multiple
-                      className="hidden"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          Array.from(e.target.files).forEach((file) =>
-                            addNewSkin(file)
-                          )
-                        }
-                      }}
-                    />
-                  </label>
+                  </button>
                 </div>
               </div>
             )}
