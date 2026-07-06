@@ -117,7 +117,7 @@ export function useSkinPack() {
     type: "success" | "error" | "info"
   } | null>(null)
 
-  const lastAddTimestamp = useRef(0)
+  const lastDeleteTimestamp = useRef(0)
 
   const showToast = (
     message: string,
@@ -155,11 +155,13 @@ export function useSkinPack() {
     }
 
     const now = Date.now()
-    if (now - lastAddTimestamp.current < 3000) {
-      showToast("Please wait 3 seconds before adding another skin.", "info")
+    if (now - lastDeleteTimestamp.current < 3000) {
+      showToast(
+        "Please wait 3 seconds after deleting a skin before adding a new one.",
+        "info"
+      )
       return
     }
-    lastAddTimestamp.current = now
 
     const id = Math.random().toString(36).slice(2, 11)
     const count = skins.length + 1
@@ -219,6 +221,7 @@ export function useSkinPack() {
 
   const removeSkin = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
+    lastDeleteTimestamp.current = Date.now()
     setSkins((prev) => {
       const target = prev.find((s) => s.id === id)
       if (
