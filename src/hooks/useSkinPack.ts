@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { SkinItem, GeometryType } from "../types"
 
 function generateUUID(): string {
@@ -117,6 +117,8 @@ export function useSkinPack() {
     type: "success" | "error" | "info"
   } | null>(null)
 
+  const lastAddTimestamp = useRef(0)
+
   const showToast = (
     message: string,
     type: "success" | "error" | "info" = "info"
@@ -147,13 +149,20 @@ export function useSkinPack() {
   }, [packName, packVersion, skins])
 
   const addNewSkin = (file: File) => {
-    const id = Math.random().toString(36).slice(2, 11)
-    const count = skins.length + 1
-
     if (!file.type.includes("image/png")) {
       alert("Please upload a PNG image file!")
       return
     }
+
+    const now = Date.now()
+    if (now - lastAddTimestamp.current < 3000) {
+      showToast("Please wait 3 seconds before adding another skin.", "info")
+      return
+    }
+    lastAddTimestamp.current = now
+
+    const id = Math.random().toString(36).slice(2, 11)
+    const count = skins.length + 1
 
     setActiveProcesses((p) => p + 1)
 
