@@ -21,6 +21,7 @@ export function SkinList({
   const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       Array.from(e.target.files).forEach((file) => onAddSkin(file))
+      e.target.value = ""
     }
   }
 
