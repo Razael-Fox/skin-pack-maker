@@ -54,6 +54,7 @@ export function useSkinPack() {
   })
   const [uuidHeader] = useState(() => generateUUID())
   const [uuidModule] = useState(() => generateUUID())
+  const [activeProcesses, setActiveProcesses] = useState(0)
 
   const [skins, setSkins] = useState<SkinItem[]>(() => {
     if (typeof window !== "undefined") {
@@ -154,6 +155,8 @@ export function useSkinPack() {
       return
     }
 
+    setActiveProcesses((p) => p + 1)
+
     const reader = new FileReader()
     reader.readAsDataURL(file)
     reader.onload = () => {
@@ -192,7 +195,16 @@ export function useSkinPack() {
         }
         setSkins((prev) => [...prev, newSkin])
         setSelectedSkinId(id)
+        setTimeout(() => {
+          setActiveProcesses((p) => Math.max(0, p - 1))
+        }, 600)
       }
+      img.onerror = () => {
+        setActiveProcesses((p) => Math.max(0, p - 1))
+      }
+    }
+    reader.onerror = () => {
+      setActiveProcesses((p) => Math.max(0, p - 1))
     }
   }
 
@@ -225,6 +237,8 @@ export function useSkinPack() {
       alert("Please upload a PNG image file!")
       return
     }
+
+    setActiveProcesses((p) => p + 1)
 
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -266,7 +280,16 @@ export function useSkinPack() {
             return s
           })
         )
+        setTimeout(() => {
+          setActiveProcesses((p) => Math.max(0, p - 1))
+        }, 600)
       }
+      img.onerror = () => {
+        setActiveProcesses((p) => Math.max(0, p - 1))
+      }
+    }
+    reader.onerror = () => {
+      setActiveProcesses((p) => Math.max(0, p - 1))
     }
   }
 
@@ -412,5 +435,6 @@ export function useSkinPack() {
     cancelDownload,
     toast,
     showToast,
+    processingSkins: activeProcesses > 0,
   }
 }

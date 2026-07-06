@@ -55,6 +55,16 @@
   --radius-md: 4px;
   --radius-lg: 4px;
   --radius-xl: 4px;
+  --animate-loading-line: loading-line 1.2s infinite ease-in-out;
+
+  @keyframes loading-line {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(300%);
+    }
+  }
 }
 
 :root {

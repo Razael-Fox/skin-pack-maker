@@ -30,6 +30,7 @@ export default function SkinPackMaker() {
     confirmDownload,
     cancelDownload,
     toast,
+    processingSkins,
   } = useSkinPack()
 
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
@@ -56,6 +57,12 @@ export default function SkinPackMaker() {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white">
+      {/* Progress line loader when files are adding/parsing */}
+      {processingSkins && (
+        <div className="fixed top-0 right-0 left-0 z-50 h-[3px] w-full overflow-hidden bg-purple-950/20">
+          <div className="animate-loading-line h-full w-1/3 bg-gradient-to-r from-purple-500 via-[#00e676] to-purple-500 shadow-[0_0_8px_#00e676]" />
+        </div>
+      )}
       {/* Hardware-accelerated fixed background image */}
       <div
         className="pointer-events-none fixed inset-0 -z-20 bg-cover bg-center bg-no-repeat"
