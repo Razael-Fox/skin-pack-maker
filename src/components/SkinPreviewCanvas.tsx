@@ -52,6 +52,10 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
   const lastMousePosRef = useRef<Point2D>({ x: 0, y: 0 })
   const lastInteractTimeRef = useRef<number>(0)
 
+  // Bug #5 fix: cache faces geometry so it's not rebuilt every frame
+  const facesRef = useRef<Face[]>([])
+  const facesGeometryKeyRef = useRef<string>("")
+
   // Load the texture image when textureUrl changes
   useEffect(() => {
     if (!textureUrl) {
@@ -139,20 +143,20 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
     let animationFrameId: number
     let active = true
 
+    // Bug #3 fix: cache canvas + ctx outside render loop
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d") as ExtendedContext | null
+    if (!ctx) return
+
+    // Bug #4 fix: set imageSmoothingEnabled once, not per face per frame
+    ctx.imageSmoothingEnabled = false
+    ;(ctx as ExtendedContext).mozImageSmoothingEnabled = false
+    ;(ctx as ExtendedContext).webkitImageSmoothingEnabled = false
+    ;(ctx as ExtendedContext).msImageSmoothingEnabled = false
+
     const render = () => {
       if (!active) return
-
-      const canvas = canvasRef.current
-      if (!canvas) {
-        animationFrameId = requestAnimationFrame(render)
-        return
-      }
-
-      const ctx = canvas.getContext("2d")
-      if (!ctx) {
-        animationFrameId = requestAnimationFrame(render)
-        return
-      }
 
       // 1. Update yaw (auto-rotate if not interacting recently)
       if (
@@ -195,7 +199,7 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
         y: centerY - p.y * scale,
       })
 
-      // 4. Build skin geometry faces
+      // 4. Build skin geometry faces (Bug #5 fix: cache and only rebuild when key changes)
       const img = imgRef.current
       const isHeight64 = img
         ? img.naturalHeight === 64 || img.naturalHeight === img.naturalWidth
@@ -203,241 +207,251 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
       const isSlim = geometry === "geometry.humanoid.customSlim"
       const armW = isSlim ? 3 : 4
 
-      const faces: Face[] = []
+      const geometryKey = `${String(isHeight64)}-${String(isSlim)}`
+      let faces: Face[]
+      if (facesGeometryKeyRef.current === geometryKey && facesRef.current.length > 0) {
+        faces = facesRef.current
+      } else {
+        faces = []
 
-      // Helper function to create standard cube faces
-      const addBox = (
-        xmin: number,
-        xmax: number,
-        ymin: number,
-        ymax: number,
-        zmin: number,
-        zmax: number,
-        tx: number,
-        ty: number,
-        dx: number,
-        dy: number,
-        dz: number,
-        isOuter: boolean,
-        mirrorX: boolean = false
-      ) => {
-        const createFace = (
-          name: string,
-          p0: Point3D,
-          p1: Point3D,
-          p2: Point3D,
-          p3: Point3D,
-          txFace: number,
-          tyFace: number,
-          twFace: number,
-          thFace: number
+        // Helper function to create standard cube faces
+        const addBox = (
+          xmin: number,
+          xmax: number,
+          ymin: number,
+          ymax: number,
+          zmin: number,
+          zmax: number,
+          tx: number,
+          ty: number,
+          dx: number,
+          dy: number,
+          dz: number,
+          isOuter: boolean,
+          mirrorX: boolean = false
         ) => {
-          faces.push({
-            name,
-            p0,
-            p1,
-            p2,
-            p3,
-            tx: txFace,
-            ty: tyFace,
-            tw: twFace,
-            th: thFace,
-            isOuter,
-            mirrorX,
-          })
+          const createFace = (
+            name: string,
+            p0: Point3D,
+            p1: Point3D,
+            p2: Point3D,
+            p3: Point3D,
+            txFace: number,
+            tyFace: number,
+            twFace: number,
+            thFace: number
+          ) => {
+            faces.push({
+              name,
+              p0,
+              p1,
+              p2,
+              p3,
+              tx: txFace,
+              ty: tyFace,
+              tw: twFace,
+              th: thFace,
+              isOuter,
+              mirrorX,
+            })
+          }
+
+          // Front
+          createFace(
+            "front",
+            { x: xmin, y: ymax, z: zmax },
+            { x: xmax, y: ymax, z: zmax },
+            { x: xmin, y: ymin, z: zmax },
+            { x: xmax, y: ymin, z: zmax },
+            tx + dz,
+            ty + dz,
+            dx,
+            dy
+          )
+
+          // Back
+          createFace(
+            "back",
+            { x: xmax, y: ymax, z: zmin },
+            { x: xmin, y: ymax, z: zmin },
+            { x: xmax, y: ymin, z: zmin },
+            { x: xmin, y: ymin, z: zmin },
+            tx + dz + dx + dz,
+            ty + dz,
+            dx,
+            dy
+          )
+
+          // Right (West side of model)
+          createFace(
+            "right",
+            { x: xmax, y: ymax, z: zmax },
+            { x: xmax, y: ymax, z: zmin },
+            { x: xmax, y: ymin, z: zmax },
+            { x: xmax, y: ymin, z: zmin },
+            tx + dz + dx,
+            ty + dz,
+            dz,
+            dy
+          )
+
+          // Left (East side of model)
+          createFace(
+            "left",
+            { x: xmin, y: ymax, z: zmin },
+            { x: xmin, y: ymax, z: zmax },
+            { x: xmin, y: ymin, z: zmin },
+            { x: xmin, y: ymin, z: zmax },
+            tx,
+            ty + dz,
+            dz,
+            dy
+          )
+
+          // Top
+          createFace(
+            "top",
+            { x: xmin, y: ymax, z: zmin },
+            { x: xmax, y: ymax, z: zmin },
+            { x: xmin, y: ymax, z: zmax },
+            { x: xmax, y: ymax, z: zmax },
+            tx + dz,
+            ty,
+            dx,
+            dz
+          )
+
+          // Bottom
+          createFace(
+            "bottom",
+            { x: xmin, y: ymin, z: zmax },
+            { x: xmax, y: ymin, z: zmax },
+            { x: xmin, y: ymin, z: zmin },
+            { x: xmax, y: ymin, z: zmin },
+            tx + dz + dx,
+            ty,
+            dx,
+            dz
+          )
         }
 
-        // Front
-        createFace(
-          "front",
-          { x: xmin, y: ymax, z: zmax },
-          { x: xmax, y: ymax, z: zmax },
-          { x: xmin, y: ymin, z: zmax },
-          { x: xmax, y: ymin, z: zmax },
-          tx + dz,
-          ty + dz,
-          dx,
-          dy
-        )
+        // Outer layers have a slight inflation factor
+        const o = 0.375
 
-        // Back
-        createFace(
-          "back",
-          { x: xmax, y: ymax, z: zmin },
-          { x: xmin, y: ymax, z: zmin },
-          { x: xmax, y: ymin, z: zmin },
-          { x: xmin, y: ymin, z: zmin },
-          tx + dz + dx + dz,
-          ty + dz,
-          dx,
-          dy
-        )
+        // Base Head
+        addBox(-4, 4, 6, 14, -4, 4, 0, 0, 8, 8, 8, false)
+        // Head Hat layer
+        addBox(-4 - o, 4 + o, 6 - o, 14 + o, -4 - o, 4 + o, 32, 0, 8, 8, 8, true)
 
-        // Right (West side of model)
-        createFace(
-          "right",
-          { x: xmax, y: ymax, z: zmax },
-          { x: xmax, y: ymax, z: zmin },
-          { x: xmax, y: ymin, z: zmax },
-          { x: xmax, y: ymin, z: zmin },
-          tx + dz + dx,
-          ty + dz,
-          dz,
-          dy
-        )
+        // Base Torso
+        addBox(-4, 4, -6, 6, -2, 2, 16, 16, 8, 12, 4, false)
+        if (isHeight64) {
+          // Jacket layer
+          addBox(
+            -4 - o,
+            4 + o,
+            -6 - o,
+            6 + o,
+            -2 - o,
+            2 + o,
+            16,
+            32,
+            8,
+            12,
+            4,
+            true
+          )
+        }
 
-        // Left (East side of model)
-        createFace(
-          "left",
-          { x: xmin, y: ymax, z: zmin },
-          { x: xmin, y: ymax, z: zmax },
-          { x: xmin, y: ymin, z: zmin },
-          { x: xmin, y: ymin, z: zmax },
-          tx,
-          ty + dz,
-          dz,
-          dy
-        )
+        // Base Right Arm
+        addBox(-4 - armW, -4, -6, 6, -2, 2, 40, 16, armW, 12, 4, false)
+        if (isHeight64) {
+          // Right Sleeve layer
+          addBox(
+            -4 - armW - o,
+            -4 + o,
+            -6 - o,
+            6 + o,
+            -2 - o,
+            2 + o,
+            40,
+            32,
+            armW,
+            12,
+            4,
+            true
+          )
+        }
 
-        // Top
-        createFace(
-          "top",
-          { x: xmin, y: ymax, z: zmin },
-          { x: xmax, y: ymax, z: zmin },
-          { x: xmin, y: ymax, z: zmax },
-          { x: xmax, y: ymax, z: zmax },
-          tx + dz,
-          ty,
-          dx,
-          dz
-        )
+        // Base Left Arm
+        if (isHeight64) {
+          addBox(4, 4 + armW, -6, 6, -2, 2, 32, 48, armW, 12, 4, false)
+          // Left Sleeve layer
+          addBox(
+            4 - o,
+            4 + armW + o,
+            -6 - o,
+            6 + o,
+            -2 - o,
+            2 + o,
+            48,
+            48,
+            armW,
+            12,
+            4,
+            true
+          )
+        } else {
+          // Mirror from Right Arm for 64x32 legacy skins
+          addBox(4, 4 + armW, -6, 6, -2, 2, 40, 16, armW, 12, 4, false, true)
+        }
 
-        // Bottom
-        createFace(
-          "bottom",
-          { x: xmin, y: ymin, z: zmax },
-          { x: xmax, y: ymin, z: zmax },
-          { x: xmin, y: ymin, z: zmin },
-          { x: xmax, y: ymin, z: zmin },
-          tx + dz + dx,
-          ty,
-          dx,
-          dz
-        )
-      }
+        // Base Right Leg
+        addBox(-4, 0, -18, -6, -2, 2, 0, 16, 4, 12, 4, false)
+        if (isHeight64) {
+          // Right Pant layer
+          addBox(
+            -4 - o,
+            0 + o,
+            -18 - o,
+            -6 + o,
+            -2 - o,
+            2 + o,
+            0,
+            32,
+            4,
+            12,
+            4,
+            true
+          )
+        }
 
-      // Outer layers have a slight inflation factor
-      const o = 0.375
+        // Base Left Leg
+        if (isHeight64) {
+          addBox(0, 4, -18, -6, -2, 2, 16, 48, 4, 12, 4, false)
+          // Left Pant layer
+          addBox(
+            0 - o,
+            4 + o,
+            -18 - o,
+            -6 + o,
+            -2 - o,
+            2 + o,
+            0,
+            48,
+            4,
+            12,
+            4,
+            true
+          )
+        } else {
+          // Mirror from Right Leg for 64x32 legacy skins
+          addBox(0, 4, -18, -6, -2, 2, 0, 16, 4, 12, 4, false, true)
+        }
 
-      // Base Head
-      addBox(-4, 4, 6, 14, -4, 4, 0, 0, 8, 8, 8, false)
-      // Head Hat layer
-      addBox(-4 - o, 4 + o, 6 - o, 14 + o, -4 - o, 4 + o, 32, 0, 8, 8, 8, true)
-
-      // Base Torso
-      addBox(-4, 4, -6, 6, -2, 2, 16, 16, 8, 12, 4, false)
-      if (isHeight64) {
-        // Jacket layer
-        addBox(
-          -4 - o,
-          4 + o,
-          -6 - o,
-          6 + o,
-          -2 - o,
-          2 + o,
-          16,
-          32,
-          8,
-          12,
-          4,
-          true
-        )
-      }
-
-      // Base Right Arm
-      addBox(-4 - armW, -4, -6, 6, -2, 2, 40, 16, armW, 12, 4, false)
-      if (isHeight64) {
-        // Right Sleeve layer
-        addBox(
-          -4 - armW - o,
-          -4 + o,
-          -6 - o,
-          6 + o,
-          -2 - o,
-          2 + o,
-          40,
-          32,
-          armW,
-          12,
-          4,
-          true
-        )
-      }
-
-      // Base Left Arm
-      if (isHeight64) {
-        addBox(4, 4 + armW, -6, 6, -2, 2, 32, 48, armW, 12, 4, false)
-        // Left Sleeve layer
-        addBox(
-          4 - o,
-          4 + armW + o,
-          -6 - o,
-          6 + o,
-          -2 - o,
-          2 + o,
-          48,
-          48,
-          armW,
-          12,
-          4,
-          true
-        )
-      } else {
-        // Mirror from Right Arm for 64x32 legacy skins
-        addBox(4, 4 + armW, -6, 6, -2, 2, 40, 16, armW, 12, 4, false, true)
-      }
-
-      // Base Right Leg
-      addBox(-4, 0, -18, -6, -2, 2, 0, 16, 4, 12, 4, false)
-      if (isHeight64) {
-        // Right Pant layer
-        addBox(
-          -4 - o,
-          0 + o,
-          -18 - o,
-          -6 + o,
-          -2 - o,
-          2 + o,
-          0,
-          32,
-          4,
-          12,
-          4,
-          true
-        )
-      }
-
-      // Base Left Leg
-      if (isHeight64) {
-        addBox(0, 4, -18, -6, -2, 2, 16, 48, 4, 12, 4, false)
-        // Left Pant layer
-        addBox(
-          0 - o,
-          4 + o,
-          -18 - o,
-          -6 + o,
-          -2 - o,
-          2 + o,
-          0,
-          48,
-          4,
-          12,
-          4,
-          true
-        )
-      } else {
-        // Mirror from Right Leg for 64x32 legacy skins
-        addBox(0, 4, -18, -6, -2, 2, 0, 16, 4, 12, 4, false, true)
+        // Cache rebuilt faces
+        facesRef.current = faces
+        facesGeometryKeyRef.current = geometryKey
       }
 
       // 5. Project vertices and calculate depth
@@ -555,12 +569,7 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
           const m21 = (pVert.x - pStart.x) / face.th
           const m22 = (pVert.y - pStart.y) / face.th
 
-          const eCtx = ctx as ExtendedContext
-          eCtx.imageSmoothingEnabled = false
-          eCtx.mozImageSmoothingEnabled = false
-          eCtx.webkitImageSmoothingEnabled = false
-          eCtx.msImageSmoothingEnabled = false
-
+          // Bug #4 fix: imageSmoothingEnabled is set once outside forEach, no need to repeat here
           ctx.setTransform(m11, m12, m21, m22, pStart.x, pStart.y)
           ctx.drawImage(
             img,
@@ -629,6 +638,8 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
     return () => {
       active = false
       cancelAnimationFrame(animationFrameId)
+      // Reset ctx transform on cleanup to avoid stale state
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
     }
   }, [isImgLoaded, geometry])
 
