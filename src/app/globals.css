@@ -58,6 +58,8 @@
   --animate-loading-line: loading-line 1.2s infinite ease-in-out;
   --animate-flash-border: flash-border 0.35s infinite alternate;
   --animate-shrink-width: shrink-width 4.5s linear forwards;
+  --animate-toast-in: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-toast-out: toast-out 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
   @keyframes loading-line {
     0% {
@@ -85,6 +87,28 @@
     }
     100% {
       width: 0%;
+    }
+  }
+
+  @keyframes toast-in {
+    0% {
+      margin-top: -20px;
+      opacity: 0;
+    }
+    100% {
+      margin-top: 0;
+      opacity: 1;
+    }
+  }
+
+  @keyframes toast-out {
+    0% {
+      margin-top: 0;
+      opacity: 1;
+    }
+    100% {
+      margin-top: -20px;
+      opacity: 0;
     }
   }
 }
