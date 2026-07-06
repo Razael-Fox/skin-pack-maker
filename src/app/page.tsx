@@ -261,36 +261,48 @@ export default function SkinPackMaker() {
       )}
       {/* Toast Notification */}
       {toast && (
-        <div className="animate-in slide-in-from-bottom-5 fixed right-6 bottom-6 z-50 flex items-center gap-3.5 rounded-xl border border-zinc-200 bg-white/95 p-4 shadow-2xl backdrop-blur-md duration-300 dark:border-white/10 dark:bg-zinc-900/95">
+        <div className="animate-in fade-in slide-in-from-top-5 fixed top-6 left-1/2 z-50 flex max-w-[90vw] min-w-[280px] -translate-x-1/2 flex-col gap-3 overflow-hidden rounded-xl border border-zinc-200 bg-white/95 p-4 shadow-2xl backdrop-blur-md md:right-6 md:left-auto md:translate-x-0 dark:border-white/10 dark:bg-zinc-900/95">
+          <div className="flex items-center gap-3.5">
+            <div
+              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                toast.type === "success"
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  : toast.type === "error"
+                    ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                    : "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+              }`}
+            >
+              {toast.type === "success" ? (
+                <span className="text-sm font-bold">✓</span>
+              ) : toast.type === "error" ? (
+                <span className="text-sm font-bold">!</span>
+              ) : (
+                <span className="text-sm font-bold">i</span>
+              )}
+            </div>
+            <div>
+              <p className="text-xs leading-tight font-semibold text-zinc-900 dark:text-white">
+                {toast.type === "success"
+                  ? "Success"
+                  : toast.type === "error"
+                    ? "Error"
+                    : "Information"}
+              </p>
+              <p className="mt-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
+                {toast.message}
+              </p>
+            </div>
+          </div>
+          {/* Shrinking progress line at the bottom */}
           <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+            className={`animate-shrink-width absolute bottom-0 left-0 h-[3px] ${
               toast.type === "success"
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                ? "bg-emerald-500"
                 : toast.type === "error"
-                  ? "bg-red-500/10 text-red-600 dark:text-red-400"
-                  : "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                  ? "bg-red-500"
+                  : "bg-purple-500"
             }`}
-          >
-            {toast.type === "success" ? (
-              <span className="text-sm font-bold">✓</span>
-            ) : toast.type === "error" ? (
-              <span className="text-sm font-bold">!</span>
-            ) : (
-              <span className="text-sm font-bold">i</span>
-            )}
-          </div>
-          <div>
-            <p className="text-xs leading-tight font-semibold text-zinc-900 dark:text-white">
-              {toast.type === "success"
-                ? "Success"
-                : toast.type === "error"
-                  ? "Error"
-                  : "Information"}
-            </p>
-            <p className="mt-0.5 text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
-              {toast.message}
-            </p>
-          </div>
+          />
         </div>
       )}
     </div>

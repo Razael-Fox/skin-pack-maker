@@ -57,6 +57,7 @@
   --radius-xl: 4px;
   --animate-loading-line: loading-line 1.2s infinite ease-in-out;
   --animate-flash-border: flash-border 0.35s infinite alternate;
+  --animate-shrink-width: shrink-width 4.5s linear forwards;
 
   @keyframes loading-line {
     0% {
@@ -75,6 +76,15 @@
     100% {
       outline: 2px solid rgba(255, 255, 255, 1);
       outline-offset: 1px;
+    }
+  }
+
+  @keyframes shrink-width {
+    0% {
+      width: 100%;
+    }
+    100% {
+      width: 0%;
     }
   }
 }
