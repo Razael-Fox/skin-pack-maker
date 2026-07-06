@@ -8,6 +8,7 @@ import { PackSettings } from "../components/PackSettings"
 import { SkinList } from "../components/SkinList"
 import { SkinEditor } from "../components/SkinEditor"
 import { SkinPreviewCanvas } from "../components/SkinPreviewCanvas"
+import { WorkspaceSkeleton } from "../components/WorkspaceSkeleton"
 
 export default function SkinPackMaker() {
   const {
@@ -50,16 +51,7 @@ export default function SkinPackMaker() {
   }, [theme])
 
   if (!mounted) {
-    return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#0a0a0a] text-center font-sans antialiased">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-purple-500 border-t-transparent" />
-          <p className="animate-pulse text-xs font-bold tracking-widest text-purple-400 uppercase">
-            Loading Workspace...
-          </p>
-        </div>
-      </div>
-    )
+    return <WorkspaceSkeleton />
   }
 
   return (
