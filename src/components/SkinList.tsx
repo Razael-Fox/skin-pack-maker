@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { User, Trash2, Upload, GripVertical } from "lucide-react"
 import { SkinItem } from "../types"
 
@@ -24,6 +24,13 @@ export function SkinList({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
+  // Touch drag states for mobile devices
+  const [activeTouchIndex, setActiveTouchIndex] = useState<number | null>(null)
+  const [touchDiffY, setTouchDiffY] = useState(0)
+  const touchStartY = useRef<number>(0)
+  const activeTouchIndexRef = useRef<number | null>(null)
+  const itemHeightRef = useRef<number>(52)
+
   const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       Array.from(e.target.files).forEach((file) => onAddSkin(file))
@@ -31,6 +38,7 @@ export function SkinList({
     }
   }
 
+  // Desktop HTML5 drag-and-drop handlers
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index)
     e.dataTransfer.effectAllowed = "move"
@@ -64,6 +72,54 @@ export function SkinList({
     onReorderSkins(draggedIndex, index)
     setDraggedIndex(null)
     setDragOverIndex(null)
+  }
+
+  // Mobile Touch drag handlers
+  const handleTouchStart = (e: React.TouchEvent, index: number) => {
+    setActiveTouchIndex(index)
+    activeTouchIndexRef.current = index
+    touchStartY.current = e.touches[0].clientY
+    setTouchDiffY(0)
+
+    const targetEl = (e.currentTarget as HTMLElement).closest(
+      ".group\\/skin"
+    ) as HTMLElement
+    if (targetEl) {
+      itemHeightRef.current = targetEl.offsetHeight || 52
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const activeIndex = activeTouchIndexRef.current
+    if (activeIndex === null) return
+
+    if (e.cancelable) {
+      e.preventDefault()
+    }
+
+    const currentY = e.touches[0].clientY
+    const diffY = currentY - touchStartY.current
+    setTouchDiffY(diffY)
+
+    const itemHeight = itemHeightRef.current
+    const steps = Math.round(diffY / itemHeight)
+
+    if (steps !== 0) {
+      const newIndex = activeIndex + steps
+      if (newIndex >= 0 && newIndex < skins.length) {
+        onReorderSkins(activeIndex, newIndex)
+        setActiveTouchIndex(newIndex)
+        activeTouchIndexRef.current = newIndex
+        touchStartY.current += steps * itemHeight
+        setTouchDiffY(diffY - steps * itemHeight)
+      }
+    }
+  }
+
+  const handleTouchEnd = () => {
+    setActiveTouchIndex(null)
+    activeTouchIndexRef.current = null
+    setTouchDiffY(0)
   }
 
   return (
@@ -105,9 +161,20 @@ export function SkinList({
               onDragEnd={handleDragEnd}
               onDrop={(e) => handleDrop(e, index)}
               onClick={() => onSelectSkin(skin.id)}
+              style={
+                activeTouchIndex === index
+                  ? {
+                      transform: `translateY(${touchDiffY}px)`,
+                      zIndex: 50,
+                      position: "relative",
+                      boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)",
+                      borderColor: "rgba(139, 92, 246, 0.5)",
+                    }
+                  : undefined
+              }
               className={`group/skin flex cursor-grab items-center justify-between rounded-lg border p-3 transition-all duration-200 active:cursor-grabbing ${
-                draggedIndex === index
-                  ? "border-purple-500/25 bg-purple-500/5 opacity-40"
+                draggedIndex === index || activeTouchIndex === index
+                  ? "scale-[1.01] border-purple-500/25 bg-purple-500/5 opacity-40"
                   : dragOverIndex === index
                     ? "translate-y-0.5 scale-[0.98] border-dashed border-purple-500 bg-purple-500/10"
                     : selectedSkinId === skin.id
@@ -116,7 +183,13 @@ export function SkinList({
               }`}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <GripVertical className="h-3.5 w-3.5 shrink-0 touch-none text-zinc-400 opacity-40 transition-opacity group-hover/skin:opacity-100 dark:text-white/30" />
+                <GripVertical
+                  onTouchStart={(e) => handleTouchStart(e, index)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                  onTouchCancel={handleTouchEnd}
+                  className="h-3.5 w-3.5 shrink-0 cursor-grab touch-none text-zinc-400 opacity-40 transition-opacity group-hover/skin:opacity-100 active:cursor-grabbing dark:text-white/30"
+                />
                 <div
                   className={`h-2.5 w-2.5 rounded-full shadow-inner ${
                     skin.textureFile
