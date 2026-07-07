@@ -35,6 +35,16 @@ export function SkinList({
     setDraggedIndex(index)
     e.dataTransfer.effectAllowed = "move"
     e.dataTransfer.setData("text/plain", index.toString())
+
+    if (e.currentTarget && e.dataTransfer.setDragImage) {
+      const rect = e.currentTarget.getBoundingClientRect()
+      // Position the touch point at the far-left side where the handle is (x=20) and vertically center it
+      e.dataTransfer.setDragImage(
+        e.currentTarget as Element,
+        20,
+        rect.height / 2
+      )
+    }
   }
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
@@ -106,7 +116,7 @@ export function SkinList({
               }`}
             >
               <div className="flex min-w-0 items-center gap-3">
-                <GripVertical className="h-3.5 w-3.5 shrink-0 text-zinc-400 opacity-40 transition-opacity group-hover/skin:opacity-100 dark:text-white/30" />
+                <GripVertical className="h-3.5 w-3.5 shrink-0 touch-none text-zinc-400 opacity-40 transition-opacity group-hover/skin:opacity-100 dark:text-white/30" />
                 <div
                   className={`h-2.5 w-2.5 rounded-full shadow-inner ${
                     skin.textureFile
