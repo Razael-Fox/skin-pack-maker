@@ -33,6 +33,7 @@ export default function SkinPackMaker() {
     showToast,
     processingSkins,
     importMcpack,
+    reorderSkins,
   } = useSkinPack()
 
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
@@ -176,6 +177,7 @@ export default function SkinPackMaker() {
               onSelectSkin={setSelectedSkinId}
               onAddSkin={addNewSkin}
               onRemoveSkin={removeSkin}
+              onReorderSkins={reorderSkins}
               highlightAddButton={highlightAddButton}
             />
 

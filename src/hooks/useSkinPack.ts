@@ -389,7 +389,8 @@ export function useSkinPack() {
         if (skin.textureFile) zip.file(skin.textureName, skin.textureFile)
       }
 
-      const blob = await zip.generateAsync({ type: "blob" })
+      const rawBlob = await zip.generateAsync({ type: "blob" })
+      const blob = new Blob([rawBlob], { type: "application/octet-stream" })
       const filename = `${packName.toLowerCase().replace(/[^a-z0-9]+/g, "_")}.mcpack`
 
       setPendingDownload({ blob, filename })
@@ -506,5 +507,13 @@ export function useSkinPack() {
     showToast,
     processingSkins: activeProcesses > 0,
     importMcpack,
+    reorderSkins: (startIndex: number, endIndex: number) => {
+      setSkins((prev) => {
+        const result = Array.from(prev)
+        const [removed] = result.splice(startIndex, 1)
+        result.splice(endIndex, 0, removed)
+        return result
+      })
+    },
   }
 }

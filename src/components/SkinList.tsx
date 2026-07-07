@@ -1,4 +1,5 @@
-import { User, Trash2, Upload } from "lucide-react"
+import { useState } from "react"
+import { User, Trash2, Upload, GripVertical } from "lucide-react"
 import { SkinItem } from "../types"
 
 interface SkinListProps {
@@ -7,6 +8,7 @@ interface SkinListProps {
   onSelectSkin: (id: string) => void
   onAddSkin: (file: File) => void
   onRemoveSkin: (id: string, e: React.MouseEvent) => void
+  onReorderSkins: (startIndex: number, endIndex: number) => void
   highlightAddButton?: boolean
 }
 
@@ -16,13 +18,42 @@ export function SkinList({
   onSelectSkin,
   onAddSkin,
   onRemoveSkin,
+  onReorderSkins,
   highlightAddButton,
 }: SkinListProps) {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
   const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       Array.from(e.target.files).forEach((file) => onAddSkin(file))
       e.target.value = ""
     }
+  }
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index)
+    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData("text/plain", index.toString())
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    if (draggedIndex === null || draggedIndex === index) return
+    setDragOverIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    if (draggedIndex === null || draggedIndex === index) return
+    onReorderSkins(draggedIndex, index)
+    setDraggedIndex(null)
+    setDragOverIndex(null)
   }
 
   return (
@@ -55,17 +86,27 @@ export function SkinList({
       </div>
       {skins.length > 0 && (
         <div className="custom-scrollbar max-h-[350px] space-y-2 overflow-y-auto pr-2">
-          {skins.map((skin) => (
+          {skins.map((skin, index) => (
             <div
               key={skin.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              onDrop={(e) => handleDrop(e, index)}
               onClick={() => onSelectSkin(skin.id)}
-              className={`group/skin flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-all duration-200 ${
-                selectedSkinId === skin.id
-                  ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
-                  : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
+              className={`group/skin flex cursor-grab items-center justify-between rounded-lg border p-3 transition-all duration-200 active:cursor-grabbing ${
+                draggedIndex === index
+                  ? "border-purple-500/25 bg-purple-500/5 opacity-40"
+                  : dragOverIndex === index
+                    ? "translate-y-0.5 scale-[0.98] border-dashed border-purple-500 bg-purple-500/10"
+                    : selectedSkinId === skin.id
+                      ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
+                      : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
               }`}
             >
               <div className="flex min-w-0 items-center gap-3">
+                <GripVertical className="h-3.5 w-3.5 shrink-0 text-zinc-400 opacity-40 transition-opacity group-hover/skin:opacity-100 dark:text-white/30" />
                 <div
                   className={`h-2.5 w-2.5 rounded-full shadow-inner ${
                     skin.textureFile
