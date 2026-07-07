@@ -209,7 +209,10 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
 
       const geometryKey = `${String(isHeight64)}-${String(isSlim)}`
       let faces: Face[]
-      if (facesGeometryKeyRef.current === geometryKey && facesRef.current.length > 0) {
+      if (
+        facesGeometryKeyRef.current === geometryKey &&
+        facesRef.current.length > 0
+      ) {
         faces = facesRef.current
       } else {
         faces = []
@@ -341,7 +344,20 @@ export const SkinPreviewCanvas = React.memo(function SkinPreviewCanvas({
         // Base Head
         addBox(-4, 4, 6, 14, -4, 4, 0, 0, 8, 8, 8, false)
         // Head Hat layer
-        addBox(-4 - o, 4 + o, 6 - o, 14 + o, -4 - o, 4 + o, 32, 0, 8, 8, 8, true)
+        addBox(
+          -4 - o,
+          4 + o,
+          6 - o,
+          14 + o,
+          -4 - o,
+          4 + o,
+          32,
+          0,
+          8,
+          8,
+          8,
+          true
+        )
 
         // Base Torso
         addBox(-4, 4, -6, 6, -2, 2, 16, 16, 8, 12, 4, false)

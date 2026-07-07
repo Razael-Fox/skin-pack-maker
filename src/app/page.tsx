@@ -30,10 +30,52 @@ export default function SkinPackMaker() {
     confirmDownload,
     cancelDownload,
     toast,
+    showToast,
     processingSkins,
+    importMcpack,
   } = useSkinPack()
 
   const [theme, setTheme] = React.useState<"light" | "dark">("dark")
+  const [pendingImport, setPendingImport] = React.useState<File | null>(null)
+  const [isDraggingPack, setIsDraggingPack] = React.useState(false)
+
+  const handleImportRequest = (file: File) => {
+    if (skins.length > 0) {
+      setPendingImport(file)
+    } else {
+      importMcpack(file)
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.dataTransfer.types.includes("Files")) {
+      setIsDraggingPack(true)
+    }
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingPack(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDraggingPack(false)
+
+    const file = e.dataTransfer.files?.[0]
+    if (file) {
+      const ext = file.name.split(".").pop()?.toLowerCase()
+      if (ext === "mcpack" || ext === "zip") {
+        handleImportRequest(file)
+      } else {
+        showToast("Please upload a valid .mcpack or .zip file.", "error")
+      }
+    }
+  }
   const [mounted, setMounted] = React.useState(false)
   const currentSkin = skins.find((s) => s.id === selectedSkinId)
   const [highlightAddButton, setHighlightAddButton] = React.useState(false)
@@ -93,7 +135,10 @@ export default function SkinPackMaker() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white">
+    <div
+      onDragOver={handleDragOver}
+      className="relative min-h-screen w-full overflow-x-hidden bg-slate-50/20 pb-12 font-sans text-zinc-900 antialiased transition-colors duration-300 dark:bg-black/40 dark:text-white"
+    >
       {/* Progress line loader when files are adding/parsing */}
       {processingSkins && (
         <div className="fixed top-0 right-0 left-0 z-50 h-[3px] w-full overflow-hidden bg-purple-950/20">
@@ -122,6 +167,7 @@ export default function SkinPackMaker() {
               onVersionChange={setPackVersion}
               theme={theme}
               setTheme={setTheme}
+              onImportMcpack={handleImportRequest}
             />
 
             <SkinList
@@ -280,6 +326,72 @@ export default function SkinPackMaker() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Confirmation Import Modal */}
+      {pendingImport && (
+        <div className="animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm duration-200">
+          <div className="animate-in zoom-in-95 w-full max-w-md rounded-xl border border-purple-500/20 bg-white/95 p-6 text-zinc-900 shadow-2xl duration-200 dark:bg-zinc-900/95 dark:text-white">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Upload className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold tracking-wider uppercase">
+                  Replace Workspace?
+                </h4>
+                <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                  Importing will overwrite your current skin pack
+                </p>
+              </div>
+            </div>
+
+            <p className="mb-6 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+              Your workspace currently has <strong>{skins.length}</strong>{" "}
+              skin(s). Importing <strong>{pendingImport.name}</strong> will
+              replace all current skins and pack settings. This action cannot be
+              undone.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingImport(null)}
+                className="flex-1 cursor-pointer rounded-lg border border-zinc-300 bg-zinc-100 py-2.5 text-xs font-bold tracking-wider text-zinc-700 uppercase transition-all hover:bg-zinc-200 dark:border-white/10 dark:bg-white/5 dark:text-white/80 dark:hover:bg-white/10"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  importMcpack(pendingImport)
+                  setPendingImport(null)
+                }}
+                className="flex-1 cursor-pointer rounded-lg bg-purple-600 py-2.5 text-xs font-bold tracking-wider text-white uppercase shadow-lg shadow-purple-600/20 transition-all hover:bg-purple-700"
+              >
+                Confirm Import
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Drag overlay */}
+      {isDraggingPack && (
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className="animate-in fade-in fixed inset-0 z-50 flex flex-col items-center justify-center bg-purple-950/80 p-6 backdrop-blur-md duration-200"
+        >
+          <div className="flex h-20 w-20 animate-bounce items-center justify-center rounded-full border border-purple-500/30 bg-purple-500/20 text-purple-400">
+            <Upload className="h-10 w-10" />
+          </div>
+          <h3 className="mt-6 text-lg font-bold tracking-widest text-white uppercase">
+            Drop to Import Skin Pack
+          </h3>
+          <p className="mt-2 text-xs text-purple-300">
+            Accepts .mcpack or .zip archives
+          </p>
         </div>
       )}
       {/* Toast Notification */}

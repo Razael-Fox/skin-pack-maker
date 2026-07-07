@@ -52,8 +52,18 @@ export function useSkinPack() {
     }
     return "1.0.0"
   })
-  const [uuidHeader] = useState(() => generateUUID())
-  const [uuidModule] = useState(() => generateUUID())
+  const [uuidHeader, setUuidHeader] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("skin_pack_uuid_header") || generateUUID()
+    }
+    return generateUUID()
+  })
+  const [uuidModule, setUuidModule] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("skin_pack_uuid_module") || generateUUID()
+    }
+    return generateUUID()
+  })
   const [activeProcesses, setActiveProcesses] = useState(0)
 
   const [skins, setSkins] = useState<SkinItem[]>(() => {
@@ -135,6 +145,8 @@ export function useSkinPack() {
 
     localStorage.setItem("skin_pack_name", packName)
     localStorage.setItem("skin_pack_version", packVersion)
+    localStorage.setItem("skin_pack_uuid_header", uuidHeader)
+    localStorage.setItem("skin_pack_uuid_module", uuidModule)
 
     const skinsToSave = skins.map((s) => ({
       id: s.id,
@@ -146,7 +158,7 @@ export function useSkinPack() {
       textureUrl: s.textureUrl,
     }))
     localStorage.setItem("skin_pack_skins", JSON.stringify(skinsToSave))
-  }, [packName, packVersion, skins])
+  }, [packName, packVersion, uuidHeader, uuidModule, skins])
 
   const addNewSkin = (file: File) => {
     if (!file.type.includes("image/png")) {
@@ -424,6 +436,54 @@ export function useSkinPack() {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const importMcpack = async (file: File) => {
+    setActiveProcesses((p) => p + 1)
+    try {
+      const { parseMcpack } = await import("../lib/mcpackParser")
+      const parsed = await parseMcpack(file)
+
+      // Clear previous object URLs
+      skins.forEach((s) => {
+        if (s.textureUrl && !s.textureUrl.startsWith("data:")) {
+          URL.revokeObjectURL(s.textureUrl)
+        }
+      })
+
+      setPackName(parsed.packName)
+      setPackVersion(parsed.packVersion)
+      setUuidHeader(parsed.uuidHeader || generateUUID())
+      setUuidModule(parsed.uuidModule || generateUUID())
+      setSkins(parsed.skins)
+
+      if (parsed.skins.length > 0) {
+        setSelectedSkinId(parsed.skins[0].id)
+      } else {
+        setSelectedSkinId(null)
+      }
+
+      if (parsed.warnings.length > 0) {
+        console.warn("Warnings during import:", parsed.warnings)
+        showToast(
+          `Pack loaded! ${parsed.skins.length} skins imported. (${parsed.warnings.length} warnings)`,
+          "info"
+        )
+      } else {
+        showToast(
+          `Pack loaded! ${parsed.skins.length} skins imported.`,
+          "success"
+        )
+      }
+    } catch (err: unknown) {
+      console.error(err)
+      showToast(
+        err instanceof Error ? err.message : "Failed to import skin pack.",
+        "error"
+      )
+    } finally {
+      setActiveProcesses((p) => Math.max(0, p - 1))
+    }
+  }
+
   return {
     packName,
     setPackName,
@@ -445,5 +505,6 @@ export function useSkinPack() {
     toast,
     showToast,
     processingSkins: activeProcesses > 0,
+    importMcpack,
   }
 }

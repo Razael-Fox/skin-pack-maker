@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Settings, Sun, Moon } from "lucide-react"
+import { Settings, Sun, Moon, Upload } from "lucide-react"
 
 interface PackSettingsProps {
   packName: string
@@ -8,6 +8,7 @@ interface PackSettingsProps {
   onVersionChange: (version: string) => void
   theme: "light" | "dark"
   setTheme: (theme: "light" | "dark") => void
+  onImportMcpack?: (file: File) => void
 }
 
 export function PackSettings({
@@ -17,6 +18,7 @@ export function PackSettings({
   onVersionChange,
   theme,
   setTheme,
+  onImportMcpack,
 }: PackSettingsProps) {
   const [prevPackName, setPrevPackName] = useState(packName)
   const [localName, setLocalName] = useState(packName)
@@ -34,6 +36,18 @@ export function PackSettings({
     setLocalVersion(packVersion)
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && onImportMcpack) {
+      onImportMcpack(file)
+    }
+    e.target.value = "" // clear choice to allow re-upload of same file
+  }
+
+  const handleImportClick = () => {
+    document.getElementById("import-mcpack-input")?.click()
+  }
+
   return (
     <div className="relative overflow-hidden rounded-xl border border-purple-500/10 bg-white/90 p-6 shadow-md backdrop-blur-md transition-all duration-300 hover:border-purple-500/20 dark:border-purple-500/20 dark:bg-zinc-900/60 dark:shadow-xl dark:shadow-black/20 dark:hover:border-purple-500/30">
       <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-purple-500/50 to-indigo-500/50" />
@@ -42,19 +56,35 @@ export function PackSettings({
           <Settings className="h-4 w-4 text-zinc-400 dark:text-white/50" />
           <span>Pack Settings</span>
         </h2>
-        <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="flex cursor-pointer items-center justify-center rounded-lg border border-zinc-200 bg-white/60 p-1.5 text-zinc-600 shadow-sm transition-all hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
-          title={
-            theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
-          }
-        >
-          {theme === "dark" ? (
-            <Sun className="h-3.5 w-3.5" />
-          ) : (
-            <Moon className="h-3.5 w-3.5" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            id="import-mcpack-input"
+            accept=".mcpack,.zip"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <button
+            onClick={handleImportClick}
+            className="flex cursor-pointer items-center justify-center rounded-lg border border-zinc-200 bg-white/60 p-1.5 text-zinc-600 shadow-sm transition-all hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
+            title="Import .mcpack File"
+          >
+            <Upload className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex cursor-pointer items-center justify-center rounded-lg border border-zinc-200 bg-white/60 p-1.5 text-zinc-600 shadow-sm transition-all hover:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10"
+            title={
+              theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
+            }
+          >
+            {theme === "dark" ? (
+              <Sun className="h-3.5 w-3.5" />
+            ) : (
+              <Moon className="h-3.5 w-3.5" />
+            )}
+          </button>
+        </div>
       </div>
       <div className="space-y-4">
         <div>
