@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { User, Trash2, Upload, GripVertical } from "lucide-react"
 import { SkinItem } from "../types"
 
@@ -24,12 +24,21 @@ export function SkinList({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
 
-  // Touch drag states for mobile devices
   const [activeTouchIndex, setActiveTouchIndex] = useState<number | null>(null)
   const [touchDiffY, setTouchDiffY] = useState(0)
   const touchStartY = useRef<number>(0)
   const activeTouchIndexRef = useRef<number | null>(null)
   const itemHeightRef = useRef<number>(52)
+
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const timer = setTimeout(() => {
+        setIsMobile("ontouchstart" in window || navigator.maxTouchPoints > 0)
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [])
 
   const handleAddFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -46,12 +55,9 @@ export function SkinList({
 
     if (e.currentTarget && e.dataTransfer.setDragImage) {
       const rect = e.currentTarget.getBoundingClientRect()
-      // Position the touch point at the far-left side where the handle is (x=20) and vertically center it
-      e.dataTransfer.setDragImage(
-        e.currentTarget as Element,
-        20,
-        rect.height / 2
-      )
+      const xOffset = e.clientX - rect.left
+      const yOffset = e.clientY - rect.top
+      e.dataTransfer.setDragImage(e.currentTarget as Element, xOffset, yOffset)
     }
   }
 
@@ -155,7 +161,7 @@ export function SkinList({
           {skins.map((skin, index) => (
             <div
               key={skin.id}
-              draggable
+              draggable={!isMobile}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => handleDragOver(e, index)}
               onDragEnd={handleDragEnd}
