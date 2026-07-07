@@ -128,6 +128,7 @@ export function useSkinPack() {
   } | null>(null)
 
   const lastDeleteTimestamp = useRef(0)
+  const saveSkinsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const showToast = (
     message: string,
@@ -139,7 +140,7 @@ export function useSkinPack() {
     }, 4500)
   }
 
-  // Save state to localStorage on changes
+  // Save metadata immediately; debounce skins to avoid blocking main thread during drag reorder
   useEffect(() => {
     if (typeof window === "undefined") return
 
@@ -148,16 +149,19 @@ export function useSkinPack() {
     localStorage.setItem("skin_pack_uuid_header", uuidHeader)
     localStorage.setItem("skin_pack_uuid_module", uuidModule)
 
-    const skinsToSave = skins.map((s) => ({
-      id: s.id,
-      name: s.name,
-      placeholderName: s.placeholderName,
-      geometry: s.geometry,
-      type: s.type,
-      textureName: s.textureName,
-      textureUrl: s.textureUrl,
-    }))
-    localStorage.setItem("skin_pack_skins", JSON.stringify(skinsToSave))
+    if (saveSkinsTimeoutRef.current) clearTimeout(saveSkinsTimeoutRef.current)
+    saveSkinsTimeoutRef.current = setTimeout(() => {
+      const skinsToSave = skins.map((s) => ({
+        id: s.id,
+        name: s.name,
+        placeholderName: s.placeholderName,
+        geometry: s.geometry,
+        type: s.type,
+        textureName: s.textureName,
+        textureUrl: s.textureUrl,
+      }))
+      localStorage.setItem("skin_pack_skins", JSON.stringify(skinsToSave))
+    }, 400)
   }, [packName, packVersion, uuidHeader, uuidModule, skins])
 
   const addNewSkin = (file: File) => {
@@ -429,6 +433,7 @@ export function useSkinPack() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (saveSkinsTimeoutRef.current) clearTimeout(saveSkinsTimeoutRef.current)
       skins.forEach((skin) => {
         if (skin.textureUrl && !skin.textureUrl.startsWith("data:")) {
           URL.revokeObjectURL(skin.textureUrl)

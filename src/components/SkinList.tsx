@@ -64,6 +64,8 @@ export function SkinList({
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
     if (draggedIndex === null || draggedIndex === index) return
+    // Guard: skip setState if value unchanged — dragover fires 30-50x/sec per card
+    if (dragOverIndex === index) return
     setDragOverIndex(index)
   }
 
@@ -175,17 +177,22 @@ export function SkinList({
                       position: "relative",
                       boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.3)",
                       borderColor: "rgba(139, 92, 246, 0.5)",
+                      // Disable CSS transition during active drag — prevents glitch when
+                      // DOM reorders and translateY resets in the same frame
+                      transition: "none",
+                      willChange: "transform",
                     }
                   : undefined
               }
-              className={`group/skin flex cursor-grab items-center justify-between rounded-lg border p-3 transition-all duration-200 active:cursor-grabbing ${
+              className={`group/skin flex cursor-grab items-center justify-between rounded-lg border p-3 active:cursor-grabbing ${
                 draggedIndex === index || activeTouchIndex === index
-                  ? "scale-[1.01] border-purple-500/25 bg-purple-500/5 opacity-40"
+                  ? // Dragged card: no transition (avoids animation fighting DOM reorder)
+                    "scale-[1.01] border-purple-500/25 bg-purple-500/5 opacity-40 transition-none will-change-transform"
                   : dragOverIndex === index
-                    ? "translate-y-0.5 scale-[0.98] border-dashed border-purple-500 bg-purple-500/10"
+                    ? "translate-y-0.5 scale-[0.98] border-dashed border-purple-500 bg-purple-500/10 transition-[transform,border-color,background-color] duration-150"
                     : selectedSkinId === skin.id
-                      ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)]"
-                      : "border-zinc-200 bg-zinc-50/50 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
+                      ? "border-purple-500/50 bg-purple-500/10 shadow-[0_0_12px_rgba(139,92,246,0.15)] transition-[border-color,background-color,box-shadow] duration-150"
+                      : "border-zinc-200 bg-zinc-50/50 transition-[border-color,background-color] duration-150 hover:border-zinc-300 hover:bg-zinc-100 dark:border-white/10 dark:bg-zinc-800/10 dark:hover:border-white/20 dark:hover:bg-white/10"
               }`}
             >
               <div className="flex min-w-0 items-center gap-3">
