@@ -239,8 +239,7 @@ export async function parseMcpack(file: File): Promise<ParsedMcpack> {
 
       if (zipImg) {
         try {
-          const imgData = await zipImg.async("uint8array")
-          const blob = new Blob([imgData], { type: "image/png" })
+          const blob = await zipImg.async("blob")
           const id = generateShortId()
           const sanitizedFilename = `skin_${id}.png`
           textureFile = new File([blob], sanitizedFilename, {
